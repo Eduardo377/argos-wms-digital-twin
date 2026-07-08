@@ -58,3 +58,21 @@ O que este MVP prova e como ele pode evoluir no futuro:
 
 * **Hoje:** Automação baseada em dados estruturados (JSON/Formulários).
 * **Amanhã (Expansão):** Capacidade de substituir o Input por **Visão Computacional**. Câmeras capturam a porta do contêiner (OCR/Zero-shot detection), enviando os dados para o *mesmo* fluxo lógico, sem necessidade de reescrever a arquitetura.
+
+[ GATILHO: Chegada do Contêiner ]
+       │
+       ▼
+[ MÓDULO 1: Opcional - Visão Computacional ] ──> (Se exigirem foto do contêiner/EPI, envia para IA extrair texto/status. Se não, pula.)
+       │
+       ▼
+[ MÓDULO 2: Consulta de Pátio (Google Sheets) ] ──> (Lê a aba "Mapa_Patio" para ver vagas livres e contêineres vizinhos)
+       │
+       ▼
+[ MÓDULO 3: Motor de Decisão (Gemini API) ] ──> (Processa o Payload do Contêiner + Mapa do Pátio com as regras de Peso/Tempo)
+       │
+       ▼
+[ MÓDULO 4: Roteador (Make Router) ]
+       │
+       ├──> Caminho A (Sucesso): Atualiza a aba "Mapa_Patio" com a nova posição.
+       │
+       └──> Caminho B (Alerta): Contêiner sem vaga ideal. Envia notificação de gargalo.
