@@ -78,3 +78,13 @@ O que este MVP prova e como ele pode evoluir no futuro:
        │
        └──> Caminho B (Alerta): Contêiner sem vaga ideal. Envia notificação de gargalo.
 ```
+
+```mermaid
+graph TD
+    A[GATILHO: Chegada do Contêiner] --> B(MÓDULO 1: Visão Computacional)
+    B -->|Se exigirem foto, extrai dados. Se não, pula.| C(MÓDULO 2: Consulta de Pátio Sheets)
+    C -->|Lê vagas e vizinhos| D(MÓDULO 3: Motor de Decisão Gemini)
+    D -->|Processa regras Peso/Tempo| E{MÓDULO 4: Roteador Make}
+    E -->|Caminho A: Sucesso| F[Atualiza aba Mapa_Patio]
+    E -->|Caminho B: Alerta| G[Envia notificação de gargalo]
+```
