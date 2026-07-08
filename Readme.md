@@ -59,6 +59,7 @@ O que este MVP prova e como ele pode evoluir no futuro:
 * **Hoje:** Automação baseada em dados estruturados (JSON/Formulários).
 * **Amanhã (Expansão):** Capacidade de substituir o Input por **Visão Computacional**. Câmeras capturam a porta do contêiner (OCR/Zero-shot detection), enviando os dados para o *mesmo* fluxo lógico, sem necessidade de reescrever a arquitetura.
 
+```text
 [ GATILHO: Chegada do Contêiner ]
        │
        ▼
@@ -76,3 +77,4 @@ O que este MVP prova e como ele pode evoluir no futuro:
        ├──> Caminho A (Sucesso): Atualiza a aba "Mapa_Patio" com a nova posição.
        │
        └──> Caminho B (Alerta): Contêiner sem vaga ideal. Envia notificação de gargalo.
+```
