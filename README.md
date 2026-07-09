@@ -21,6 +21,16 @@ Em vez de tentar abraçar um sistema YMS (Yard Management System) inteiro em uma
 
 ---
 
+## 🤖 Arquitetura Visual e IA
+
+A interface inicial e a mecânica de Drag-and-Drop (API HTML5 nativa) deste dashboard foram geradas em tempo recorde utilizando a IA **v0.dev**. 
+
+Para garantir a identidade visual corporativa (padrão Wilson Sons) e a ergonomia de um terminal portuário (Dark Mode), foi utilizado um prompt rigorosamente estruturado com regras de design, Tailwind CSS e validação cruzada. 
+
+📄 **Você pode conferir o prompt exato utilizado para gerar a UI no arquivo:** [`PROMPT_UI.md`](./PROMPT_UI.md)
+
+---
+
 ## ⚙️ A Arquitetura da Solução
 
 Fluxo de dados automatizado, sem necessidade de treinamento de modelos do zero.
