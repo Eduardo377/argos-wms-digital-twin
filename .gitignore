@@ -13,3 +13,21 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+*.pdf
+
+# IDEs / Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Arquivos de Sistema
+Thumbs.db
+._*
