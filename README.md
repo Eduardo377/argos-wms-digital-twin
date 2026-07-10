@@ -28,6 +28,7 @@ A interface inicial e a mecânica de Drag-and-Drop (API HTML5 nativa) deste dash
 Para garantir a identidade visual corporativa (padrão Wilson Sons) e a ergonomia de um terminal portuário (Dark Mode), foi utilizado um prompt rigorosamente estruturado com regras de design, Tailwind CSS e validação cruzada. 
 
 📄 **Você pode conferir o prompt exato utilizado para gerar a UI no arquivo:** [`PROMPT_UI.md`](./PROMPT_UI.md)
+   **O blueprint completo da automação do Make.com está disponível na pasta [./backend/blueprint-roteirizador.json](./backend/blueprint-roteirizador.json). Qualquer pessoa avaliando o repositório pode importá-lo em uma conta gratuita do Make para replicar toda a lógica do Cérebro IA em segundos.**
 
 ---
 
