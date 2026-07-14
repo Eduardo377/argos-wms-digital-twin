@@ -43,7 +43,7 @@ export function TerminalDashboard() {
       try {
         // IMPORTANTE: Cole o seu link CSV do Google Sheets aqui dentro das aspas!
         const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCc9twlC8XYC0kUnvOw2K8x1osRJAV4pfRJtxEEMsYLgppXXnSHAyHYaiQzi87PxU1PMVa-8H6-vvV/pub?gid=561983303&single=true&output=csv",
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?gid=0&single=true&output=csv",
         );
         const csvText = await response.text();
 
@@ -84,7 +84,7 @@ export function TerminalDashboard() {
     try {
       // Faz a requisição POST real para o Webhook do Make.com
       const response = await fetch(
-        "https://hook.us2.make.com/88j4n1bd7knt1hpub5m2r62bvgeds7kf",
+        "https://hook.us2.make.com/6bm9v22mgy79tivdm8pxf87og8pwfcae",
         {
           method: "POST",
           headers: {
@@ -236,10 +236,13 @@ export function TerminalDashboard() {
         />
       </div>
 
-      <footer className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Anchor className="size-3.5" aria-hidden="true" />
-        Sistema de roteirização de pátio · simulação de alocação assistida por
-        IA
+      <footer className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <Anchor className="size-3.5" aria-hidden="true" />
+          Sistema de roteirização para armazéns · simulação de alocação
+          assistida por IA
+        </div>
+        <div className="font-mono opacity-50">Build v2.0.0</div>
       </footer>
     </div>
   );
