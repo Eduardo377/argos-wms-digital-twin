@@ -24,6 +24,7 @@ export function TerminalDashboard() {
     weight: "",
     departure: "",
     zone: "Hot",
+    isIMO: false,
   });
   const [loading, setLoading] = useState(false);
   const [targetId, setTargetId] = useState<string | null>(null);
@@ -41,13 +42,11 @@ export function TerminalDashboard() {
   useEffect(() => {
     async function fetchYardMap() {
       try {
-        // IMPORTANTE: Cole o seu link CSV do Google Sheets aqui dentro das aspas!
         const response = await fetch(
           "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?gid=0&single=true&output=csv",
         );
         const csvText = await response.text();
 
-        // Divide o texto por linhas e pula o cabeçalho
         const rows = csvText.split("\n").slice(1);
 
         const loadedSlots = rows
@@ -216,7 +215,6 @@ export function TerminalDashboard() {
       )}
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
-        {/* Esta div "sticky" faz o formulário (e o botão) acompanharem a rolagem da tela */}
         <div className="sticky top-6 z-10">
           <MovementForm
             data={data}
@@ -226,7 +224,6 @@ export function TerminalDashboard() {
           />
         </div>
 
-        {/* O YardMap continua logo abaixo, do jeito que estava */}
         <YardMap
           slots={slots}
           targetId={targetId}
