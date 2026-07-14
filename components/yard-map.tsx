@@ -1,8 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type { Slot } from "@/lib/yard";
-import { GRID_SIZE } from "@/lib/yard";
-import { Box, Crosshair, MapPin } from "lucide-react";
+import { ROWS_COUNT, LEVELS_COUNT } from "@/lib/yard";
+import { Box, Crosshair, MapPin, Layers } from "lucide-react";
 
 type YardMapProps = {
   slots: Slot[];
@@ -19,46 +20,97 @@ export function YardMap({
   containerId,
   onDropSlot,
 }: YardMapProps) {
+  const [selectedLevel, setSelectedLevel] = useState<number>(1);
+
+  useEffect(() => {
+    if (targetId) {
+      const match = targetId.match(/-N(\d+)/);
+      if (match && match[1]) {
+        setSelectedLevel(Number(match[1]));
+      }
+    }
+  }, [targetId]);
+
+  const visibleSlots = slots.filter((slot) =>
+    slot.id.endsWith(`-N${selectedLevel}`),
+  );
+
+  const gridColumns = ROWS_COUNT || 5;
+  const totalLevels = LEVELS_COUNT || 7;
+
   return (
     <section
-      aria-label="Mapa do pátio"
+      aria-label="Matriz do Armazém"
       className="flex flex-col rounded-xl border border-border bg-card/60 p-6"
     >
-      <header className="mb-6 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <MapPin className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <h2 className="text-lg font-semibold leading-tight text-foreground">
-              Mapa do Pátio
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {GRID_SIZE} x {GRID_SIZE} vagas de alocação
-            </p>
+      <header className="mb-4 flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Layers className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="text-lg font-semibold leading-tight text-foreground">
+                Matriz Autoportante
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Visualizando Nível {selectedLevel}
+              </p>
+            </div>
           </div>
+          {targetId && (
+            <span className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary shadow-sm">
+              <Crosshair className="size-3.5" aria-hidden="true" />
+              Alvo IA: {targetId}
+            </span>
+          )}
         </div>
-        {targetId && (
-          <span className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <Crosshair className="size-3.5" aria-hidden="true" />
-            Alvo IA: {targetId}
-          </span>
-        )}
+
+        {/* Navegação por Andares (Eixo Z) */}
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+          {Array.from({ length: totalLevels }).map((_, i) => {
+            const level = i + 1;
+            const isSelected = selectedLevel === level;
+
+            // Verifica se o andar tem o slot alvo para colocar um pontinho de aviso (Notification Dot)
+            const hasTarget = targetId?.endsWith(`-N${level}`);
+
+            return (
+              <button
+                key={level}
+                type="button"
+                onClick={() => setSelectedLevel(level)}
+                className={`relative flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-all ${
+                  isSelected
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-background border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                Nível {level}
+                {hasTarget && !isSelected && (
+                  <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-orange-500 animate-pulse" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </header>
 
       <div
         className="grid flex-1 gap-3"
-        style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}
+        style={{
+          gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
+        }}
         role="grid"
-        aria-label="Vagas do pátio"
+        aria-label={`Vagas do Nível ${selectedLevel}`}
       >
-        {slots.map((slot) => {
+        {visibleSlots.map((slot) => {
           const isTarget = slot.id === targetId;
-          const isNewlyOccupied = slot.id === occupiedId; // Ocupada agora pelo drag and drop
-          const isHistoricallyOccupied = slot.status === "Ocupado"; // Ocupada lá na planilha
+          const isNewlyOccupied = slot.id === occupiedId;
+          const isHistoricallyOccupied = slot.status === "Ocupado";
 
-          // A vaga está indisponível se acabou de receber um contêiner OU se já tinha um
           const isOccupied = isNewlyOccupied || isHistoricallyOccupied;
+          const isHazardous = slot.isIMO;
 
           return (
             <div
@@ -77,7 +129,9 @@ export function YardMap({
               className={[
                 "relative flex aspect-square flex-col items-center justify-center rounded-lg border text-center transition-colors",
                 isOccupied
-                  ? "border-primary bg-primary/20"
+                  ? isHazardous
+                    ? "border-destructive bg-destructive/20"
+                    : "border-primary bg-primary/20"
                   : isTarget
                     ? "animate-target-pulse border-primary bg-primary/5"
                     : "border-border bg-background/40 hover:border-primary/40 hover:bg-background/70",
@@ -86,11 +140,10 @@ export function YardMap({
               {isOccupied ? (
                 <>
                   <Box
-                    className="mb-1 size-6 text-primary"
+                    className={`mb-1 size-6 ${isHazardous ? "text-destructive" : "text-primary"}`}
                     aria-hidden="true"
                   />
                   <span className="max-w-full truncate px-1 font-mono text-[10px] font-semibold text-foreground">
-                    {/* Mostra o ID que vc arrastou OU o ID que veio da planilha */}
                     {isNewlyOccupied
                       ? containerId
                       : slot.containerId || "OCUPADA"}

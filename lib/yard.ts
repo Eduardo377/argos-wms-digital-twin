@@ -3,29 +3,33 @@ export type Zone = "Hot" | "Warm" | "Cold";
 export type Slot = {
   id: string;
   label: string;
-  status?: string; // "Livre" ou "Ocupado"
-  containerId?: string; // Ex: "HLXU-1001"
-  zone?: string; // "Hot", "Warm", "Cold"
+  status?: string;
+  containerId?: string;
+  zone?: string;
+  isIMO?: boolean;
 };
 
 export type MovementData = {
   containerId: string;
   weight: string;
-  departure: string;                                       
+  departure: string;
   zone: Zone;
+  isIMO: boolean;
 };
 
-export const GRID_SIZE = 5;
-const COLUMNS = ["A", "B", "C", "D", "E"];
+export const COLUMNS = ["A", "B", "C", "D", "E"];
+export const ROWS_COUNT = 5;
+export const LEVELS_COUNT = 7;
 
 export function buildSlots(): Slot[] {
   const slots: Slot[] = [];
-  let counter = 1;
-  for (let row = 1; row <= GRID_SIZE; row++) {
-    for (let col = 0; col < GRID_SIZE; col++) {
-      const label = `${COLUMNS[col]}${row}-N${counter}`;
-      slots.push({ id: label, label });
-      counter < 5 ? counter++ : (counter = 1);
+
+  for (const col of COLUMNS) {
+    for (let row = 1; row <= ROWS_COUNT; row++) {
+      for (let level = 1; level <= LEVELS_COUNT; level++) {
+        const label = `${col}${row}-N${level}`;
+        slots.push({ id: label, label });
+      }
     }
   }
   return slots;
