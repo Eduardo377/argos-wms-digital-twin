@@ -43,7 +43,7 @@ export function TerminalDashboard() {
     async function fetchYardMap() {
       try {
         const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?gid=0&single=true&output=csv",
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?output=csv",
         );
         const csvText = await response.text();
 
@@ -83,7 +83,7 @@ export function TerminalDashboard() {
     try {
       // Faz a requisição POST real para o Webhook do Make.com
       const response = await fetch(
-        "https://hook.us2.make.com/6bm9v22mgy79tivdm8pxf87og8pwfcae",
+        "https://hook.us2.make.com/wkgnjqyrij68oewjr14djuhtyiap6fzm",
         {
           method: "POST",
           headers: {
