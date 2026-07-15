@@ -21,6 +21,57 @@ A IA processa o estado atual do armazém aplicando três restrições críticas:
 
 ---
 
+Anotado. Você tocou num ponto excelente sobre a documentação de API para testes independentes.
+
+Para que qualquer pessoa (ou você mesmo no futuro) consiga testar o roteirizador IA disparando requisições direto para o Webhook do Make via ferramentas como ReqBin, Postman ou Insomnia, sem precisar usar a interface do Next.js, nós precisamos documentar o **contrato do payload (JSON)**.
+
+Abaixo está a documentação pronta em Markdown para você adicionar ao seu `README.md` ou enviar para os avaliadores do desafio. Ela já reflete os campos atualizados com a estrutura em português e a nova tag `IMO` que definimos.
+
+---
+
+### 📡 Teste de Integração (API / Webhook)
+
+Para testar o Cérebro IA (roteirizador) diretamente via cliente HTTP (como ReqBin, Postman ou Insomnia), sem utilizar o dashboard Front-end, envie uma requisição `POST` para a URL do seu Webhook no Make.com utilizando a seguinte estrutura de dados.
+
+**Endpoint (Exemplo):**
+`POST [https://hook.us2.make.com/SEU_ID_DE_WEBHOOK](https://hook.us2.make.com/SEU_ID_DE_WEBHOOK)`
+
+**Headers:**
+`Content-Type: application/json`
+
+**Body (Raw JSON):**
+
+```json
+{
+  "id_conteiner": "MSCU-5544",
+  "peso_ton": 8.5,
+  "data_chegada": "2026-07-08",
+  "data_saida_prevista": "2026-07-12",
+  "IMO": "Sim"
+}
+
+```
+
+**Dicionário de Dados:**
+
+* `id_conteiner` *(string)*: Identificador alfa-numérico único do contêiner.
+* `peso_ton` *(number)*: Peso da carga em toneladas. Utilizado pela IA para determinar a restrição de gravidade (pesados na base).
+* `data_chegada` *(string)*: Data de registro no formato YYYY-MM-DD.
+* `data_saida_prevista` *(string)*: Data programada de saída (YYYY-MM-DD). Utilizado para evitar alocação de cargas de longa permanência sobre cargas de saída rápida.
+* `IMO` *(string)*: Flag de carga perigosa (`"Sim"` ou `"Nao"`). Se `"Sim"`, a IA restringe a alocação exclusivamente para a Rua 5 (isolamento).
+
+**Resposta Esperada (200 OK):**
+O Make.com processará a lógica via Gemini 1.5 e retornará a vaga alvo e a justificativa no seguinte formato:
+
+```json
+{
+  "targetSlot": "C5-N1"
+}
+
+```
+
+---
+
 ## ⚙️ Arquitetura Técnica
 
 ### Fluxo de Dados
@@ -72,7 +123,6 @@ graph TD
     └── placeholder.svg
 
 ```
-
 ---
 
 ## 🛠️ Tecnologias Utilizadas
