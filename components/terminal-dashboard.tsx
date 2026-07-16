@@ -2,13 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { MovementData, Slot } from "@/lib/yard";
-import { buildSlots } from "@/lib/yard";
 import { MovementForm } from "@/components/movement-form";
 import { YardMap } from "@/components/yard-map";
 import { Footer } from "@/components/footer";
 import {
   AlertTriangle,
-  Anchor,
   CheckCircle2,
   GripVertical,
   Package,
@@ -19,7 +17,6 @@ type Result = { kind: "success" | "risk"; slot: string } | null;
 
 export function TerminalDashboard() {
   const [slots, setSlots] = useState<Slot[]>([]);
-
   const [data, setData] = useState<MovementData>({
     containerId: "",
     weight: "",
@@ -32,15 +29,14 @@ export function TerminalDashboard() {
   const [occupiedId, setOccupiedId] = useState<string | null>(null);
   const [containerReady, setContainerReady] = useState(false);
   const [result, setResult] = useState<Result>(null);
+  const [allocationError, setAllocationError] = useState<string | null>(null);
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const displayId = data.containerId.trim() || "CTNR-0000";
 
   const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL!;
   const MAPA_PATIO_CSV_URL = process.env.NEXT_PUBLIC_MAPA_PATIO_CSV_URL!;
-  const LOG_MOVIMENTACAO_CSV_URL =
-    process.env.NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL!;
-  const RISCO_ALERTA_CSV_URL = process.env.NEXT_PUBLIC_RISCO_ALERTA_CSV_URL!;
 
   function handleChange(patch: Partial<MovementData>) {
     setData((prev) => ({ ...prev, ...patch }));
@@ -51,9 +47,7 @@ export function TerminalDashboard() {
       try {
         const response = await fetch(MAPA_PATIO_CSV_URL);
         const csvText = await response.text();
-
         const rows = csvText.split("\n").slice(1);
-
         const loadedSlots = rows
           .map((row) => {
             const [posId, status, idContainer, peso, data, saida, zona] =
@@ -66,14 +60,12 @@ export function TerminalDashboard() {
               zone: zona?.trim(),
             };
           })
-          .filter((s) => s.id); // Ignora linhas vazias
-
+          .filter((s) => s.id);
         setSlots(loadedSlots);
       } catch (error) {
         console.error("Erro ao carregar o pátio:", error);
       }
     }
-
     fetchYardMap();
   }, []);
 
@@ -81,6 +73,7 @@ export function TerminalDashboard() {
     if (timerRef.current) clearTimeout(timerRef.current);
     setLoading(true);
     setResult(null);
+    setAllocationError(null);
     setOccupiedId(null);
     setTargetId(null);
     setContainerReady(false);
@@ -90,44 +83,41 @@ export function TerminalDashboard() {
         id_conteiner: data.containerId,
         peso_ton: Number(data.weight),
         data_saida_prevista: data.departure,
-        IMO: data.isIMO
+        IMO: data.isIMO,
       };
 
       const response = await fetch(WEBHOOK_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error("Falha na comunicação com a Torre de Controle");
-      }
-
-      // O Make.com deve devolver um JSON de resposta (Webhook Response)
+      // Se falhar (400 ou outro), tentamos ler a justificativa da IA
       const responseData = await response.json();
 
-      // Assumindo que o Make retorna algo como: { "targetSlot": "B2-N1" }
-      const chosenSlotId = responseData.targetSlot;
+      if (!response.ok) {
+        setAllocationError(
+          responseData.justificativa ||
+            "Falha na comunicação com a Torre de Controle.",
+        );
+        return;
+      }
 
-      // Verifica se a vaga que a IA escolheu realmente existe no mapa
+      // Sucesso
+      const chosenSlotId = responseData.targetSlot;
       const chosen = slots.find((s) => s.id === chosenSlotId);
 
       if (chosen) {
         setTargetId(chosen.id);
         setContainerReady(true);
       } else {
-        console.error(
-          "Risco: A IA alucinou uma vaga inexistente no pátio:",
-          chosenSlotId,
+        setAllocationError(
+          responseData.justificativa || "A IA não encontrou uma vaga válida.",
         );
       }
     } catch (error) {
       console.error("Erro de Integração:", error);
-      alert(
-        "Erro ao conectar com o Cérebro IA. Verifique se o Webhook está rodando.",
-      );
+      setAllocationError("Erro de conexão com a infraestrutura do sistema.");
     } finally {
       setLoading(false);
     }
@@ -145,10 +135,9 @@ export function TerminalDashboard() {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      {/* Exibição de Resultado */}
       {result && (
         <div
-          role="status"
-          aria-live="polite"
           className={[
             "flex items-start gap-3 rounded-xl border px-4 py-3.5",
             result.kind === "success"
@@ -157,44 +146,51 @@ export function TerminalDashboard() {
           ].join(" ")}
         >
           {result.kind === "success" ? (
-            <CheckCircle2
-              className="mt-0.5 size-5 shrink-0"
-              aria-hidden="true"
-            />
+            <CheckCircle2 className="mt-0.5 size-5 shrink-0" />
           ) : (
-            <AlertTriangle
-              className="mt-0.5 size-5 shrink-0"
-              aria-hidden="true"
-            />
+            <AlertTriangle className="mt-0.5 size-5 shrink-0" />
           )}
           <div className="flex-1">
             <p className="font-semibold">
               {result.kind === "success"
-                ? "Sucesso: Alocado conforme roteirização da IA"
-                : "Risco: Divergência de Pátio identificada"}
+                ? "Sucesso: Alocado"
+                : "Risco: Divergência de Pátio"}
             </p>
             <p className="text-sm opacity-80">
               {result.kind === "success"
-                ? `Contêiner ${displayId} posicionado na vaga alvo ${result.slot}.`
-                : `Contêiner ${displayId} alocado em ${result.slot}, fora da vaga recomendada (${targetId}).`}
+                ? `Posicionado na vaga ${result.slot}.`
+                : `Alocado em ${result.slot}, fora da vaga recomendada (${targetId}).`}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setResult(null)}
-            aria-label="Fechar aviso"
-            className="rounded-md p-1 opacity-70 transition-opacity hover:opacity-100"
+            className="rounded-md p-1 opacity-70 hover:opacity-100"
           >
-            <X className="size-4" aria-hidden="true" />
+            <X className="size-4" />
           </button>
         </div>
       )}
 
+      {/* Exibição da Justificativa de Erro da IA */}
+      {allocationError && (
+        <div className="rounded-lg border border-red-500/50 bg-red-500/5 p-4 text-red-200">
+          <h3 className="font-bold flex items-center gap-2">
+            <AlertTriangle className="size-5" />
+            Análise Logística: Impedimento
+          </h3>
+          <p className="text-sm mt-2 opacity-90 leading-relaxed">
+            {allocationError}
+          </p>
+        </div>
+      )}
+
+      {/* Contêiner pronto para drag */}
       {containerReady && (
         <div className="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4">
           <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="size-4 text-primary" aria-hidden="true" />
-            Contêiner aguardando alocação — arraste até uma vaga do pátio
+            <Package className="size-4 text-primary" />
+            Contêiner aguardando alocação
           </div>
           <div
             draggable
@@ -203,12 +199,10 @@ export function TerminalDashboard() {
               e.dataTransfer.setData("text/plain", displayId);
             }}
             className="inline-flex cursor-grab items-center gap-3 rounded-lg border border-primary bg-primary/15 px-4 py-3 text-foreground active:cursor-grabbing"
-            role="button"
-            aria-label={`Contêiner ${displayId}, arrastável`}
           >
-            <GripVertical className="size-5 text-primary" aria-hidden="true" />
+            <GripVertical className="size-5 text-primary" />
             <span className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Package className="size-5" aria-hidden="true" />
+              <Package className="size-5" />
             </span>
             <div className="leading-tight">
               <p className="font-mono text-sm font-semibold">{displayId}</p>
@@ -230,7 +224,6 @@ export function TerminalDashboard() {
             onConsult={handleConsult}
           />
         </div>
-
         <YardMap
           slots={slots}
           targetId={targetId}
@@ -239,7 +232,6 @@ export function TerminalDashboard() {
           onDropSlot={handleDropSlot}
         />
       </div>
-
       <Footer />
     </div>
   );
