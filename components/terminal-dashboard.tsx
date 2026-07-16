@@ -36,6 +36,26 @@ export function TerminalDashboard() {
 
   const displayId = data.containerId.trim() || "CTNR-0000";
 
+  // Define se você está rodando na sua máquina (dev) ou na Vercel (produção)
+  const isDev = process.env.NODE_ENV === "development";
+
+  // Puxa do .env.local se for Dev. Se for Produção, usa as URLs oficiais da apresentação.
+  const WEBHOOK_URL = isDev
+    ? process.env.NEXT_PUBLIC_WEBHOOK_URL!
+    : "https://hook.us2.make.com/wkgnjqyrij68oewjr14djuhtyiap6fzm";
+
+  const MAPA_PATIO_CSV_URL = isDev
+    ? process.env.NEXT_PUBLIC_MAPA_PATIO_CSV_URL!
+    : "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?gid=0&single=true&output=csv";
+
+  const LOG_MOVIMENTACAO_CSV_URL = isDev
+    ? process.env.NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL!
+    : "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnwyhHVOuQ-cfkj1pxH_DUUzK0GBKJL1RJiaGWREGhGnS0yCBiLnGjmX5HLb_-zlvJ9kPlJFX2o-XC/pub?gid=0&single=true&output=csv";
+
+  const RISCO_ALERTA_CSV_URL = isDev
+    ? process.env.NEXT_PUBLIC_RISCO_ALERTA_CSV_URL!
+    : "https://docs.google.com/spreadsheets/d/e/2PACX-1vTja3JokVWGZUmzhha7_r79RgaY7LWrKcQ26scHkv4QAfdecm3NuZZcwO3wz4l6y0LZuB8URcO9BDfe/pub?gid=0&single=true&output=csv";
+
   function handleChange(patch: Partial<MovementData>) {
     setData((prev) => ({ ...prev, ...patch }));
   }
@@ -43,9 +63,7 @@ export function TerminalDashboard() {
   useEffect(() => {
     async function fetchYardMap() {
       try {
-        const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQiWqZ_iQc_mtpeubCXFk4MNDo48NWuxEkS27L4Mw6tTAFWlrnvBOHZY4kKWPMij06E44nKWiH1dhvg/pub?output=csv",
-        );
+        const response = await fetch(MAPA_PATIO_CSV_URL);
         const csvText = await response.text();
 
         const rows = csvText.split("\n").slice(1);
@@ -84,16 +102,14 @@ export function TerminalDashboard() {
     try {
       // Faz a requisição POST real para o Webhook do Make.com
       const response = await fetch(
-        "https://hook.us2.make.com/wkgnjqyrij68oewjr14djuhtyiap6fzm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // O estado 'data' já contém as chaves: containerId, weight, departure e zone
-          body: JSON.stringify(data),
+        WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        // O estado 'data' já contém as chaves: containerId, weight, departure e zone
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         throw new Error("Falha na comunicação com a Torre de Controle");
