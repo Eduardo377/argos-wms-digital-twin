@@ -21,14 +21,6 @@ A IA processa o estado atual do armazém aplicando três restrições críticas:
 
 ---
 
-Anotado. Você tocou num ponto excelente sobre a documentação de API para testes independentes.
-
-Para que qualquer pessoa (ou você mesmo no futuro) consiga testar o roteirizador IA disparando requisições direto para o Webhook do Make via ferramentas como ReqBin, Postman ou Insomnia, sem precisar usar a interface do Next.js, nós precisamos documentar o **contrato do payload (JSON)**.
-
-Abaixo está a documentação pronta em Markdown para você adicionar ao seu `README.md` ou enviar para os avaliadores do desafio. Ela já reflete os campos atualizados com a estrutura em português e a nova tag `IMO` que definimos.
-
----
-
 ### 📡 Teste de Integração (API / Webhook)
 
 Para testar o Cérebro IA (roteirizador) diretamente via cliente HTTP (como ReqBin, Postman ou Insomnia), sem utilizar o dashboard Front-end, envie uma requisição `POST` para a URL do seu Webhook no Make.com utilizando a seguinte estrutura de dados.
@@ -178,6 +170,27 @@ ou
 ```bash
 pnpm dev
 ```
+---
+## 🔒 Variáveis de Ambiente e Deploy
+
+O projeto foi refatorado para utilizar o padrão de variáveis de ambiente (`process.env`), garantindo a segurança das credenciais e a separação total entre os ambientes de Desenvolvimento e Produção.
+
+### Desenvolvimento Local (Sandbox)
+Para rodar o projeto localmente, crie um arquivo `.env.local` na raiz do projeto contendo as URLs do seu ambiente de testes (ex: conta Make descartável):
+
+```env
+NEXT_PUBLIC_WEBHOOK_URL="sua_url_de_teste_aqui"
+NEXT_PUBLIC_MAPA_PATIO_CSV_URL="sua_planilha_de_teste_aqui"
+NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL="sua_planilha_de_teste_aqui"
+NEXT_PUBLIC_RISCO_ALERTA_CSV_URL="sua_planilha_de_teste_aqui"
+```
+
+### Produção (Vercel)
+Em produção, não utilizamos o arquivo `.env.local`. As URLs oficiais do ambiente da apresentação (conta Make principal e planilhas oficiais) devem ser cadastradas diretamente nas configurações do projeto na Vercel (aba *Settings* > *Environment Variables*), conforme o exemplo abaixo:
+
+![Configuração das Variáveis na Vercel](./docs/vercel-prod-env-setup.png)
+
+**Nota:** Lembre-se de realizar um *Redeploy* na Vercel sempre que alterar o valor de alguma dessas chaves.
 
 ---
 
@@ -205,7 +218,7 @@ Projeto desenvolvido como parte do desafio técnico da **KODIE Academy** em parc
   <img src="https://github.com/Eduardo377.png" width="120px;" alt="Foto de Eduardo Gomes Andrade" style="border-radius: 50%;"/>
 </a>
 <br />
-<strong>Eduarde Andrade</strong>
+<strong>Eduardo Andrade</strong>
 <br />
 <em>Full Stack Developer</em>
 <br /><br />
