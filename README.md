@@ -102,6 +102,7 @@ graph TD
 │   └── blueprint-roteirizador.json
 ├── docs/             # Arquitetura e Diagramas
 │   ├── fluxo_make_automacao.png
+│   ├── vercel-prod-env-setup.png
 │   └── FLOW_ARCHITECTURE.md
 └── public/           # Assets e Icons
     ├── apple-icon.png

@@ -36,11 +36,11 @@ export function TerminalDashboard() {
 
   const displayId = data.containerId.trim() || "CTNR-0000";
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL!;
-const MAPA_PATIO_CSV_URL = process.env.NEXT_PUBLIC_MAPA_PATIO_CSV_URL!;
-const LOG_MOVIMENTACAO_CSV_URL =
-  process.env.NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL!;
-const RISCO_ALERTA_CSV_URL = process.env.NEXT_PUBLIC_RISCO_ALERTA_CSV_URL!;
+  const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL!;
+  const MAPA_PATIO_CSV_URL = process.env.NEXT_PUBLIC_MAPA_PATIO_CSV_URL!;
+  const LOG_MOVIMENTACAO_CSV_URL =
+    process.env.NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL!;
+  const RISCO_ALERTA_CSV_URL = process.env.NEXT_PUBLIC_RISCO_ALERTA_CSV_URL!;
 
   function handleChange(patch: Partial<MovementData>) {
     setData((prev) => ({ ...prev, ...patch }));
@@ -86,15 +86,19 @@ const RISCO_ALERTA_CSV_URL = process.env.NEXT_PUBLIC_RISCO_ALERTA_CSV_URL!;
     setContainerReady(false);
 
     try {
-      // Faz a requisição POST real para o Webhook do Make.com
-      const response = await fetch(
-        WEBHOOK_URL, {
+      const payload = {
+        id_conteiner: data.containerId,
+        peso_ton: Number(data.weight),
+        data_saida_prevista: data.departure,
+        IMO: data.isIMO
+      };
+
+      const response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // O estado 'data' já contém as chaves: containerId, weight, departure e zone
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {

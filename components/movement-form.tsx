@@ -2,7 +2,7 @@
 
 import type { MovementData, Zone } from "@/lib/yard"
 import { ZONE_OPTIONS } from "@/lib/yard"
-import { BrainCircuit, Container, Loader2, Thermometer } from "lucide-react"
+import { BrainCircuit, Container, Loader2, Thermometer, AlertTriangle } from "lucide-react"
 
 type MovementFormProps = {
   data: MovementData
@@ -28,20 +28,27 @@ export function MovementForm({ data, loading, onChange, onConsult }: MovementFor
           <Container className="size-5" aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-lg font-semibold leading-tight text-foreground">Nova Movimentação</h2>
-          <p className="text-sm text-muted-foreground">Registro de entrada no pátio</p>
+          <h2 className="text-lg font-semibold leading-tight text-foreground">
+            Nova Movimentação
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Registro de entrada no pátio
+          </p>
         </div>
       </header>
 
       <form
         className="flex flex-1 flex-col gap-5"
         onSubmit={(e) => {
-          e.preventDefault()
-          onConsult()
+          e.preventDefault();
+          onConsult();
         }}
       >
         <div className="flex flex-col gap-2">
-          <label htmlFor="containerId" className="text-sm font-medium text-foreground">
+          <label
+            htmlFor="containerId"
+            className="text-sm font-medium text-foreground"
+          >
             ID do Contêiner
           </label>
           <input
@@ -57,8 +64,11 @@ export function MovementForm({ data, loading, onChange, onConsult }: MovementFor
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="weight" className="text-sm font-medium text-foreground">
-              Peso (tons)
+            <label
+              htmlFor="weight"
+              className="text-sm font-medium text-foreground"
+            >
+              Peso (ton's)
             </label>
             <input
               id="weight"
@@ -73,7 +83,10 @@ export function MovementForm({ data, loading, onChange, onConsult }: MovementFor
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="departure" className="text-sm font-medium text-foreground">
+            <label
+              htmlFor="departure"
+              className="text-sm font-medium text-foreground"
+            >
               Previsão de Saída
             </label>
             <input
@@ -110,6 +123,26 @@ export function MovementForm({ data, loading, onChange, onConsult }: MovementFor
           </div>
         </div>
 
+        {/* Campo IMO (Carga Perigosa) */}
+        <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/50 p-3 shadow-sm">
+          <input
+            type="checkbox"
+            id="isIMO"
+            checked={data.isIMO}
+            onChange={(e) => onChange({ isIMO: e.target.checked })}
+            className="h-4 w-4 cursor-pointer rounded border-primary text-primary focus:ring-primary accent-orange-500"
+          />
+          <label
+            htmlFor="isIMO"
+            className="flex cursor-pointer select-none items-center gap-2 text-sm font-medium"
+          >
+            Sinalizar como Carga IMO <AlertTriangle />
+            <span className="text-xs font-normal text-muted-foreground">
+              (Produto Perigoso)
+            </span>
+          </label>
+        </div>
+
         <button
           type="submit"
           disabled={loading}
@@ -129,5 +162,5 @@ export function MovementForm({ data, loading, onChange, onConsult }: MovementFor
         </button>
       </form>
     </section>
-  )
+  );
 }
