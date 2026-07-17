@@ -7,6 +7,9 @@ export type Slot = {
   containerId?: string;
   zone?: string;
   isIMO?: boolean;
+  peso?: string;
+  dataSaida?: string;
+  dataChegada?: string;
 };
 
 export type MovementData = {

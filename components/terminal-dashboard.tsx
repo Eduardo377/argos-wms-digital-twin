@@ -50,14 +50,27 @@ export function TerminalDashboard() {
         const rows = csvText.split("\n").slice(1);
         const loadedSlots = rows
           .map((row) => {
-            const [posId, status, idContainer, peso, data, saida, zona] =
-              row.split(",");
+            const [
+              posId,
+              status,
+              idContainer,
+              peso,
+              dataHora,
+              saidaPrevista,
+              zona,
+              imo,
+            ] = row.split(",");
+
             return {
               id: posId?.trim(),
               label: posId?.trim(),
               status: status?.trim(),
-              containerId: idContainer?.trim(),
-              zone: zona?.trim(),
+              containerId: idContainer?.replace(/"/g, "").trim(),
+              peso: peso?.replace(/"/g, "").trim(),
+              dataChegada: dataHora?.replace(/"/g, "").trim(),
+              dataSaida: saidaPrevista?.replace(/"/g, "").trim(),
+              zone: zona?.replace(/"/g, "").trim(),
+              isIMO: imo?.replace(/"/g, "").trim().toLowerCase() === "sim",
             };
           })
           .filter((s) => s.id);
