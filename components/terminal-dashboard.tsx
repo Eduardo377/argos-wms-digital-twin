@@ -60,7 +60,15 @@ export function TerminalDashboard() {
               zona,
               imo,
             ] = row.split(",");
-
+            console.log(posId);
+            console.log(status);
+            console.log(status);
+            console.log(idContainer);
+            console.log(peso);
+            console.log(dataHora);
+            console.log(saidaPrevista);
+            console.log(zona);
+            console.log(imo);
             return {
               id: posId?.trim(),
               label: posId?.trim(),
@@ -82,59 +90,90 @@ export function TerminalDashboard() {
     fetchYardMap();
   }, []);
 
-  async function handleConsult() {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setLoading(true);
-    setResult(null);
-    setAllocationError(null);
-    setOccupiedId(null);
-    setTargetId(null);
-    setContainerReady(false);
+async function handleConsult() {
+  if (timerRef.current) clearTimeout(timerRef.current);
+  setLoading(true);
+  setResult(null);
+  setAllocationError(null);
+  setOccupiedId(null);
+  setTargetId(null);
+  setContainerReady(false);
 
+  try {
+    const payload = {
+      id_conteiner: data.containerId,
+      peso_ton: Number(data.weight),
+      data_saida_prevista: data.departure,
+      IMO: data.isIMO,
+    };
+
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    // 1. Lê a resposta bruta como texto primeiro (evita o SyntaxError)
+    const textResponse = await response.text();
+    let responseData: any = {};
+
+    // 2. Tenta converter para JSON com segurança
     try {
-      const payload = {
-        id_conteiner: data.containerId,
-        peso_ton: Number(data.weight),
-        data_saida_prevista: data.departure,
-        IMO: data.isIMO,
-      };
-
-      const response = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      // Se falhar (400 ou outro), tentamos ler a justificativa da IA
-      const responseData = await response.json();
-
+      if (textResponse) {
+        responseData = JSON.parse(textResponse);
+      }
+    } catch (parseError) {
+      console.warn("Resposta não-JSON recebida da API:", textResponse);
+      // Se a resposta falhou e não é JSON (ex: Make retornou string de erro)
       if (!response.ok) {
+        throw new Error(textResponse || `Erro HTTP: ${response.status}`);
+      }
+    }
+
+    // 3. Trata os erros mapeados
+    if (!response.ok) {
+      // Se for o erro de rate limit do Make, traduzimos para o operador
+      if (textResponse.includes("Too many")) {
         setAllocationError(
-          responseData.justificativa ||
-            "Falha na comunicação com a Torre de Controle.",
+          "Limite de tráfego atingido. Aguarde alguns segundos e tente novamente.",
         );
         return;
       }
 
-      // Sucesso
-      const chosenSlotId = responseData.targetSlot;
-      const chosen = slots.find((s) => s.id === chosenSlotId);
-
-      if (chosen) {
-        setTargetId(chosen.id);
-        setContainerReady(true);
-      } else {
-        setAllocationError(
-          responseData.justificativa || "A IA não encontrou uma vaga válida.",
-        );
-      }
-    } catch (error) {
-      console.error("Erro de Integração:", error);
-      setAllocationError("Erro de conexão com a infraestrutura do sistema.");
-    } finally {
-      setLoading(false);
+      setAllocationError(
+        responseData.justificativa ||
+          "Falha na comunicação com a Torre de Controle.",
+      );
+      return;
     }
+
+    // 4. Sucesso na Alocação
+    const chosenSlotId = responseData.targetSlot;
+    const chosen = slots.find((s) => s.id === chosenSlotId);
+
+    if (chosen) {
+      setTargetId(chosen.id);
+      setContainerReady(true);
+    } else {
+      setAllocationError(
+        responseData.justificativa || "A IA não encontrou uma vaga válida.",
+      );
+    }
+  } catch (error: any) {
+    console.error("Erro de Integração:", error);
+
+    // Captura o erro customizado caso o Make lance "Too many requests"
+    if (error.message?.includes("Too many")) {
+      setAllocationError(
+        "Servidor ocupado (Muitas requisições simultâneas). Tente novamente em instantes.",
+      );
+    } else {
+      setAllocationError("Erro de conexão com a infraestrutura do sistema.");
+    }
+  } finally {
+    setLoading(false);
   }
+}
 
   function handleDropSlot(slotId: string) {
     if (!containerReady || occupiedId) return;

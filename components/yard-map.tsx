@@ -126,13 +126,13 @@ export function YardMap({
             >
               {isOccupied ? (
                 <div className="flex h-full w-full flex-col p-2 overflow-hidden text-left">
-{/* ID do Contêiner */}
-                  <span className="w-full truncate font-mono text-[11px] font-bold text-white border-b border-white/10 pb-1 mb-1">
-                    {slot.label} —{" "}
+                  <span className="w-full truncate font-mono text-[14px] font-bold text-white border-white/10 pb-1 mb-1">
+                    {slot.label}{" "}
+                  </span>
+                  <span className="w-full truncate font-mono text-[14px] font-bold text-white border-b border-white/10 pb-1 mb-1">
                     {isNewlyOccupied ? containerId : slot.containerId}
                   </span>
 
-                  {/* Informações detalhadas sem siglas confusas */}
                   <div className="mt-1 flex flex-col gap-[2px]">
                     <div className="flex justify-between text-[9px]">
                       <span className="text-muted-foreground">Peso:</span>
