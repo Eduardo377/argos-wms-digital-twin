@@ -31,6 +31,10 @@ export function TerminalDashboard() {
   const [result, setResult] = useState<Result>(null);
   const [allocationError, setAllocationError] = useState<string | null>(null);
 
+  // Estados do Guindaste (Sticky Drag)
+  const [isGrabbed, setIsGrabbed] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const displayId = data.containerId.trim() || "CTNR-0000";
@@ -41,6 +45,18 @@ export function TerminalDashboard() {
   function handleChange(patch: Partial<MovementData>) {
     setData((prev) => ({ ...prev, ...patch }));
   }
+
+  // Efeito para rastrear o mouse APENAS quando a caixa for "fisgada"
+  useEffect(() => {
+    if (!isGrabbed) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [isGrabbed]);
 
   useEffect(() => {
     async function fetchYardMap() {
@@ -60,15 +76,6 @@ export function TerminalDashboard() {
               zona,
               imo,
             ] = row.split(",");
-            console.log(posId);
-            console.log(status);
-            console.log(status);
-            console.log(idContainer);
-            console.log(peso);
-            console.log(dataHora);
-            console.log(saidaPrevista);
-            console.log(zona);
-            console.log(imo);
             return {
               id: posId?.trim(),
               label: posId?.trim(),
@@ -98,6 +105,7 @@ export function TerminalDashboard() {
     setOccupiedId(null);
     setTargetId(null);
     setContainerReady(false);
+    setIsGrabbed(false); // Garante que começa desengatado
 
     try {
       const payload = {
@@ -113,14 +121,11 @@ export function TerminalDashboard() {
         body: JSON.stringify(payload),
       });
 
-      // 1. Lê a resposta bruta como texto primeiro (evita o SyntaxError)
       const textResponse = await response.text();
       let responseData: any = {};
 
-      // 2. Tenta converter para JSON com segurança, limpando markdown
       try {
         if (textResponse) {
-          // Remove crases de código (```json e ```) que a IA adora colocar
           const cleanedText = textResponse
             .replace(/```(?:json)?\n?|```/g, "")
             .trim();
@@ -128,16 +133,12 @@ export function TerminalDashboard() {
         }
       } catch (parseError) {
         console.warn("Resposta não-JSON recebida da API:", textResponse);
-        // ... (resto do seu código catch)
-        // Se a resposta falhou e não é JSON (ex: Make retornou string de erro)
         if (!response.ok) {
           throw new Error(textResponse || `Erro HTTP: ${response.status}`);
         }
       }
 
-      // 3. Trata os erros mapeados
       if (!response.ok) {
-        // Se for o erro de rate limit do Make, traduzimos para o operador
         if (textResponse.includes("Too many")) {
           setAllocationError(
             "Limite de tráfego atingido. Aguarde alguns segundos e tente novamente.",
@@ -152,7 +153,6 @@ export function TerminalDashboard() {
         return;
       }
 
-      // 4. Sucesso na Alocação
       const chosenSlotId = responseData.targetSlot;
       const chosen = slots.find((s) => s.id === chosenSlotId);
 
@@ -166,8 +166,6 @@ export function TerminalDashboard() {
       }
     } catch (error: any) {
       console.error("Erro de Integração:", error);
-
-      // Captura o erro customizado caso o Make lance "Too many requests"
       if (error.message?.includes("Too many")) {
         setAllocationError(
           "Servidor ocupado (Muitas requisições simultâneas). Tente novamente em instantes.",
@@ -180,15 +178,50 @@ export function TerminalDashboard() {
     }
   }
 
-  function handleDropSlot(slotId: string) {
-    if (!containerReady || occupiedId) return;
-    setOccupiedId(slotId);
-    setContainerReady(false);
-    setResult({
-      kind: slotId === targetId ? "success" : "risk",
-      slot: slotId,
+async function handleDropSlot(slotId: string) {
+  if (!containerReady || occupiedId) return;
+
+  // 1. Atualização Otimista: Muda a UI imediatamente (UX perfeita)
+  setOccupiedId(slotId);
+  setContainerReady(false);
+  setIsGrabbed(false); // Solta a caixa do mouse
+  setResult({
+    kind: slotId === targetId ? "success" : "risk",
+    slot: slotId,
+  });
+
+  // 2. O Braço: Envia os dados silenciosamente para o Make.com gravar
+  try {
+    const payloadGravacao = {
+      vaga_confirmada: slotId,
+      id_conteiner: displayId,
+      peso_ton: Number(data.weight),
+      data_saida_prevista: data.departure,
+      IMO: data.isIMO,
+      zona: data.zone,
+      status: "Ocupado",
+    };
+
+    const WEBHOOK_GRAVACAO = process.env.NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL!;
+
+    if (!WEBHOOK_GRAVACAO) {
+      console.warn("URL de gravação não configurada no .env");
+      return;
+    }
+
+    // Dispara o POST sem travar a tela do usuário
+    await fetch(WEBHOOK_GRAVACAO, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payloadGravacao),
     });
+
+    console.log("Sucesso: Movimentação registrada na Torre de Controle.");
+  } catch (error) {
+    console.error("Falha ao gravar movimentação no banco:", error);
+    // Aqui você poderia até adicionar um Toast (alerta) de erro de rede se quisesse
   }
+}
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
@@ -242,20 +275,20 @@ export function TerminalDashboard() {
         </div>
       )}
 
-      {/* Contêiner pronto para drag */}
+      {/* Contêiner pronto para Fisgar */}
       {containerReady && (
         <div className="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4">
           <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
             <Package className="size-4 text-primary" />
-            Contêiner aguardando alocação
+            Clique para fisgar o contêiner
           </div>
           <div
-            draggable
-            onDragStart={(e) => {
-              e.dataTransfer.effectAllowed = "move";
-              e.dataTransfer.setData("text/plain", displayId);
-            }}
-            className="inline-flex cursor-grab items-center gap-3 rounded-lg border border-primary bg-primary/15 px-4 py-3 text-foreground active:cursor-grabbing"
+            onClick={() => setIsGrabbed(true)}
+            className={`inline-flex items-center gap-3 rounded-lg border border-primary px-4 py-3 text-foreground transition-all ${
+              isGrabbed
+                ? "bg-primary/30 opacity-50 cursor-grabbing"
+                : "bg-primary/15 hover:bg-primary/20 cursor-pointer"
+            }`}
           >
             <GripVertical className="size-5 text-primary" />
             <span className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -281,14 +314,38 @@ export function TerminalDashboard() {
             onConsult={handleConsult}
           />
         </div>
+
         <YardMap
           slots={slots}
           targetId={targetId}
           occupiedId={occupiedId}
           containerId={displayId}
           onDropSlot={handleDropSlot}
+          // Passamos a informação para o mapa saber se estamos segurando algo
+          isGrabbed={isGrabbed}
         />
       </div>
+
+      {/* O Contêiner Fantasma que segue o mouse */}
+      {isGrabbed && (
+        <div
+          className="fixed z-[9999] opacity-90 shadow-2xl pointer-events-none"
+          style={{
+            left: mousePos.x,
+            top: mousePos.y,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <div className="inline-flex items-center gap-3 rounded-lg border border-primary bg-primary/30 px-4 py-3 text-foreground backdrop-blur-sm">
+            <Package className="size-5 text-primary" />
+            <div className="leading-tight">
+              <span className="font-mono font-bold text-sm">{displayId}</span>
+              <p className="text-xs opacity-80">Solte na vaga...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

@@ -19,7 +19,16 @@ export function YardMap({
   occupiedId,
   containerId,
   onDropSlot,
-}: YardMapProps) {
+  isGrabbed, // 1. Adicione a variável aqui
+}: {
+  // Se a tipagem estiver aqui direto, adicione a linha abaixo:
+  slots: any[];
+  targetId: string | null;
+  occupiedId: string | null;
+  containerId: string;
+  onDropSlot: (id: string) => void;
+  isGrabbed: boolean; // 2. Adicione o tipo boolean aqui
+}) {  
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
 
   useEffect(() => {
@@ -116,12 +125,13 @@ export function YardMap({
                     ? "animate-target-pulse border-primary bg-primary/5"
                     : "border-border bg-background/40 hover:border-primary/40",
               ].join(" ")}
-              onDragOver={(e) => {
-                if (!isOccupied) e.preventDefault();
-              }}
-              onDrop={(e) => {
+              onClick={(e) => {
                 e.preventDefault();
-                if (!isOccupied) onDropSlot(slot.id);
+
+                // Só permite soltar a caixa se a vaga estiver VAZIA e o guindaste estiver SEGURANDO algo
+                if (!isOccupied && isGrabbed) {
+                  onDropSlot(slot.id);
+                }
               }}
             >
               {isOccupied ? (
