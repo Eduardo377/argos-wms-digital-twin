@@ -85,7 +85,7 @@ export function TerminalDashboard() {
               dataChegada: dataHora?.replace(/"/g, "").trim(),
               dataSaida: saidaPrevista?.replace(/"/g, "").trim(),
               zone: zona?.replace(/"/g, "").trim(),
-              isIMO: imo?.replace(/"/g, "").trim().toLowerCase() === "sim",
+              isIMO: imo?.replace(/"/g, "").trim() === "TRUE",
             };
           })
           .filter((s) => s.id);
@@ -97,6 +97,13 @@ export function TerminalDashboard() {
     fetchYardMap();
   }, []);
 
+  // 1. Clean Code: Tipagem estrita para a resposta do Cérebro IA (Make.com)
+  type WebhookResponse = {
+    targetSlot?: string;
+    justificativa?: string;
+    Status?: string;
+  };
+
   async function handleConsult() {
     if (timerRef.current) clearTimeout(timerRef.current);
     setLoading(true);
@@ -105,7 +112,7 @@ export function TerminalDashboard() {
     setOccupiedId(null);
     setTargetId(null);
     setContainerReady(false);
-    setIsGrabbed(false); // Garante que começa desengatado
+    setIsGrabbed(false);
 
     try {
       const payload = {
@@ -122,14 +129,14 @@ export function TerminalDashboard() {
       });
 
       const textResponse = await response.text();
-      let responseData: any = {};
+      let responseData: WebhookResponse = {};
 
       try {
         if (textResponse) {
           const cleanedText = textResponse
             .replace(/```(?:json)?\n?|```/g, "")
             .trim();
-          responseData = JSON.parse(cleanedText);
+          responseData = JSON.parse(cleanedText) as WebhookResponse;
         }
       } catch (parseError) {
         console.warn("Resposta não-JSON recebida da API:", textResponse);
@@ -164,9 +171,14 @@ export function TerminalDashboard() {
           responseData.justificativa || "A IA não encontrou uma vaga válida.",
         );
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro de Integração:", error);
-      if (error.message?.includes("Too many")) {
+
+      // 2. Clean Code: Tratamento de erro seguro usando 'instanceof'
+      const isError = error instanceof Error;
+      const errorMessage = isError ? error.message : "";
+
+      if (errorMessage.includes("Too many")) {
         setAllocationError(
           "Servidor ocupado (Muitas requisições simultâneas). Tente novamente em instantes.",
         );
@@ -178,50 +190,50 @@ export function TerminalDashboard() {
     }
   }
 
-async function handleDropSlot(slotId: string) {
-  if (!containerReady || occupiedId) return;
+  async function handleDropSlot(slotId: string) {
+    if (!containerReady || occupiedId) return;
 
-  // 1. Atualização Otimista: Muda a UI imediatamente (UX perfeita)
-  setOccupiedId(slotId);
-  setContainerReady(false);
-  setIsGrabbed(false); // Solta a caixa do mouse
-  setResult({
-    kind: slotId === targetId ? "success" : "risk",
-    slot: slotId,
-  });
-
-  // 2. O Braço: Envia os dados silenciosamente para o Make.com gravar
-  try {
-    const payloadGravacao = {
-      vaga_confirmada: slotId,
-      id_conteiner: displayId,
-      peso_ton: Number(data.weight),
-      data_saida_prevista: data.departure,
-      IMO: data.isIMO,
-      zona: data.zone,
-      status: "Ocupado",
-    };
-
-    const WEBHOOK_GRAVACAO = process.env.NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL!;
-
-    if (!WEBHOOK_GRAVACAO) {
-      console.warn("URL de gravação não configurada no .env");
-      return;
-    }
-
-    // Dispara o POST sem travar a tela do usuário
-    await fetch(WEBHOOK_GRAVACAO, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payloadGravacao),
+    // 1. Atualização Otimista: Muda a UI imediatamente (UX perfeita)
+    setOccupiedId(slotId);
+    setContainerReady(false);
+    setIsGrabbed(false); // Solta a caixa do mouse
+    setResult({
+      kind: slotId === targetId ? "success" : "risk",
+      slot: slotId,
     });
 
-    console.log("Sucesso: Movimentação registrada na Torre de Controle.");
-  } catch (error) {
-    console.error("Falha ao gravar movimentação no banco:", error);
-    // Aqui você poderia até adicionar um Toast (alerta) de erro de rede se quisesse
+    // 2. O Braço: Envia os dados silenciosamente para o Make.com gravar
+    try {
+      const payloadGravacao = {
+        vaga_confirmada: slotId,
+        id_conteiner: displayId,
+        peso_ton: Number(data.weight),
+        data_saida_prevista: data.departure,
+        IMO: data.isIMO,
+        zona: data.zone,
+        status: "Ocupado",
+      };
+
+      const WEBHOOK_GRAVACAO = process.env.NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL!;
+
+      if (!WEBHOOK_GRAVACAO) {
+        console.warn("URL de gravação não configurada no .env");
+        return;
+      }
+
+      // Dispara o POST sem travar a tela do usuário
+      await fetch(WEBHOOK_GRAVACAO, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payloadGravacao),
+      });
+
+      console.log("Sucesso: Movimentação registrada na Torre de Controle.");
+    } catch (error) {
+      console.error("Falha ao gravar movimentação no banco:", error);
+      // Aqui você poderia até adicionar um Toast (alerta) de erro de rede se quisesse
+    }
   }
-}
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">

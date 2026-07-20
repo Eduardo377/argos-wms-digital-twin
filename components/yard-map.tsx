@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import type { Slot } from "@/lib/yard";
 import { ROWS_COUNT, LEVELS_COUNT } from "@/lib/yard";
-import { Box, Crosshair, Layers } from "lucide-react";
+import { Crosshair, Layers } from "lucide-react";
 
 type YardMapProps = {
   slots: Slot[];
   targetId: string | null;
   occupiedId: string | null;
   containerId: string;
+  isGrabbed: boolean;
   onDropSlot: (slotId: string) => void;
 };
 
@@ -18,17 +19,9 @@ export function YardMap({
   targetId,
   occupiedId,
   containerId,
+  isGrabbed,
   onDropSlot,
-  isGrabbed, // 1. Adicione a variável aqui
-}: {
-  // Se a tipagem estiver aqui direto, adicione a linha abaixo:
-  slots: any[];
-  targetId: string | null;
-  occupiedId: string | null;
-  containerId: string;
-  onDropSlot: (id: string) => void;
-  isGrabbed: boolean; // 2. Adicione o tipo boolean aqui
-}) {  
+}: YardMapProps) {
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
 
   useEffect(() => {
@@ -119,19 +112,24 @@ export function YardMap({
           const isOccupied = isNewlyOccupied || isHistoricallyOccupied;
           const isHazardous = slot.isIMO;
 
+          let statusClasses =
+            "border-border bg-background/40 hover:border-primary/40";
+
+          if (isTarget) {
+            statusClasses = "animate-target-pulse border-primary bg-primary/5";
+          }
+
+          if (isOccupied) {
+            statusClasses = isHazardous
+              ? "border-destructive bg-destructive/30"
+              : zoneBgColors[slot.zone?.toUpperCase() || "HOT"] ||
+                "border-primary bg-primary/20";
+          }
+
           return (
             <div
               key={slot.id}
-              className={[
-                "relative flex aspect-square flex-col items-center justify-center rounded-lg border text-center transition-colors",
-                isOccupied
-                  ? isHazardous
-                    ? "border-destructive bg-destructive/30"
-                    : zoneBgColors[slot.zone?.toUpperCase() || "HOT"] || "border-primary bg-primary/20"
-                  : isTarget
-                    ? "animate-target-pulse border-primary bg-primary/5"
-                    : "border-border bg-background/40 hover:border-primary/40",
-              ].join(" ")}
+              className={`relative flex aspect-square flex-col items-center justify-center rounded-lg border text-center transition-colors ${statusClasses}`}
               onClick={(e) => {
                 e.preventDefault();
                 if (!isOccupied && isGrabbed) {
