@@ -5,6 +5,9 @@ import type { MovementData, Slot } from "@/lib/yard";
 import { MovementForm } from "@/components/movement-form";
 import { YardMap } from "@/components/yard-map";
 import { Footer } from "@/components/footer";
+import { GhostContainer } from "@/components/ghost-container";
+import { ContainerGrabber } from "@/components/container-grabber";
+import { StatusAlerts } from "@/components/status-alerts";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -231,91 +234,27 @@ export function TerminalDashboard() {
       console.log("Sucesso: Movimentação registrada na Torre de Controle.");
     } catch (error) {
       console.error("Falha ao gravar movimentação no banco:", error);
-      // Aqui você poderia até adicionar um Toast (alerta) de erro de rede se quisesse
+      // Adicionar um Toast (alerta) de erro de rede.
     }
   }
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
-      {/* Exibição de Resultado */}
-      {result && (
-        <div
-          className={[
-            "flex items-start gap-3 rounded-xl border px-4 py-3.5",
-            result.kind === "success"
-              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-              : "border-red-500/40 bg-red-500/10 text-red-300",
-          ].join(" ")}
-        >
-          {result.kind === "success" ? (
-            <CheckCircle2 className="mt-0.5 size-5 shrink-0" />
-          ) : (
-            <AlertTriangle className="mt-0.5 size-5 shrink-0" />
-          )}
-          <div className="flex-1">
-            <p className="font-semibold">
-              {result.kind === "success"
-                ? "Sucesso: Alocado"
-                : "Risco: Divergência de Pátio"}
-            </p>
-            <p className="text-sm opacity-80">
-              {result.kind === "success"
-                ? `Posicionado na vaga ${result.slot}.`
-                : `Alocado em ${result.slot}, fora da vaga recomendada (${targetId}).`}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setResult(null)}
-            className="rounded-md p-1 opacity-70 hover:opacity-100"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-      )}
+      <StatusAlerts
+        result={result}
+        targetId={targetId}
+        allocationError={allocationError}
+        onClearResult={() => setResult(null)}
+      />
 
-      {/* Exibição da Justificativa de Erro da IA */}
-      {allocationError && (
-        <div className="rounded-lg border border-red-500/50 bg-red-500/5 p-4 text-red-200">
-          <h3 className="font-bold flex items-center gap-2">
-            <AlertTriangle className="size-5" />
-            Análise Logística: Impedimento
-          </h3>
-          <p className="text-sm mt-2 opacity-90 leading-relaxed">
-            {allocationError}
-          </p>
-        </div>
-      )}
-
-      {/* Contêiner pronto para Fisgar */}
-      {containerReady && (
-        <div className="rounded-xl border border-dashed border-primary/50 bg-primary/5 p-4">
-          <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-            <Package className="size-4 text-primary" />
-            Clique para fisgar o contêiner
-          </div>
-          <div
-            onClick={() => setIsGrabbed(true)}
-            className={`inline-flex items-center gap-3 rounded-lg border border-primary px-4 py-3 text-foreground transition-all ${
-              isGrabbed
-                ? "bg-primary/30 opacity-50 cursor-grabbing"
-                : "bg-primary/15 hover:bg-primary/20 cursor-pointer"
-            }`}
-          >
-            <GripVertical className="size-5 text-primary" />
-            <span className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Package className="size-5" />
-            </span>
-            <div className="leading-tight">
-              <p className="font-mono text-sm font-semibold">{displayId}</p>
-              <p className="text-xs text-muted-foreground">
-                {data.weight ? `${data.weight} t` : "peso n/d"} · Zona{" "}
-                {data.zone}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <ContainerGrabber
+        containerReady={containerReady}
+        isGrabbed={isGrabbed}
+        displayId={displayId}
+        weight={data.weight}
+        zone={data.zone}
+        onGrab={() => setIsGrabbed(true)}
+      />
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
         <div className="sticky top-6 z-10">
@@ -333,30 +272,15 @@ export function TerminalDashboard() {
           occupiedId={occupiedId}
           containerId={displayId}
           onDropSlot={handleDropSlot}
-          // Passamos a informação para o mapa saber se estamos segurando algo
           isGrabbed={isGrabbed}
         />
       </div>
 
-      {/* O Contêiner Fantasma que segue o mouse */}
-      {isGrabbed && (
-        <div
-          className="fixed z-[9999] opacity-90 shadow-2xl pointer-events-none"
-          style={{
-            left: mousePos.x,
-            top: mousePos.y,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <div className="inline-flex items-center gap-3 rounded-lg border border-primary bg-primary/30 px-4 py-3 text-foreground backdrop-blur-sm">
-            <Package className="size-5 text-primary" />
-            <div className="leading-tight">
-              <span className="font-mono font-bold text-sm">{displayId}</span>
-              <p className="text-xs opacity-80">Solte na vaga...</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <GhostContainer
+        isGrabbed={isGrabbed}
+        mousePos={mousePos}
+        displayId={displayId}
+      />
 
       <Footer />
     </div>
