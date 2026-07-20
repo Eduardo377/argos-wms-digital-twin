@@ -1,23 +1,35 @@
-"use client"
+"use client";
 
-import type { MovementData, Zone } from "@/lib/yard"
-import { ZONE_OPTIONS } from "@/lib/yard"
-import { BrainCircuit, Container, Loader2, Thermometer, AlertTriangle } from "lucide-react"
+import type { MovementData, Zone } from "@/lib/yard";
+import { ZONE_OPTIONS } from "@/lib/yard";
+import {
+  BrainCircuit,
+  Container,
+  Loader2,
+  Thermometer,
+  AlertTriangle,
+} from "lucide-react";
 
 type MovementFormProps = {
-  data: MovementData
-  loading: boolean
-  onChange: (patch: Partial<MovementData>) => void
-  onConsult: () => void
-}
+  data: MovementData;
+  loading: boolean;
+  onChange: (patch: Partial<MovementData>) => void;
+  onConsult: () => void;
+};
 
 const zoneAccent: Record<Zone, string> = {
   Hot: "text-red-400",
   Warm: "text-orange-400",
   Cold: "text-sky-400",
-}
+  Frozen: "text-cyan-400",
+};
 
-export function MovementForm({ data, loading, onChange, onConsult }: MovementFormProps) {
+export function MovementForm({
+  data,
+  loading,
+  onChange,
+  onConsult,
+}: MovementFormProps) {
   return (
     <section
       aria-label="Nova movimentação"

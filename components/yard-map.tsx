@@ -44,6 +44,13 @@ export function YardMap({
     slot.id.endsWith(`-N${selectedLevel}`),
   );
 
+  const zoneBgColors: Record<string, string> = {
+    HOT: "border-red-500/50 bg-red-500/20",
+    WARM: "border-orange-500/50 bg-orange-500/20",
+    COLD: "border-sky-500/50 bg-sky-500/20",
+    FROZEN: "border-cyan-400/60 bg-cyan-400/20",
+  };
+
   const gridColumns = ROWS_COUNT || 5;
   const totalLevels = LEVELS_COUNT || 7;
 
@@ -119,16 +126,14 @@ export function YardMap({
                 "relative flex aspect-square flex-col items-center justify-center rounded-lg border text-center transition-colors",
                 isOccupied
                   ? isHazardous
-                    ? "border-destructive bg-destructive/20"
-                    : "border-primary bg-primary/20"
+                    ? "border-destructive bg-destructive/30"
+                    : zoneBgColors[slot.zone?.toUpperCase() || "HOT"] || "border-primary bg-primary/20"
                   : isTarget
                     ? "animate-target-pulse border-primary bg-primary/5"
                     : "border-border bg-background/40 hover:border-primary/40",
               ].join(" ")}
               onClick={(e) => {
                 e.preventDefault();
-
-                // Só permite soltar a caixa se a vaga estiver VAZIA e o guindaste estiver SEGURANDO algo
                 if (!isOccupied && isGrabbed) {
                   onDropSlot(slot.id);
                 }

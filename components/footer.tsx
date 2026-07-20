@@ -34,7 +34,7 @@ export function Footer() {
           <Mail className="size-3.5" /> E-mail
         </a>
         <div className="ml-2 border-l border-border/50 pl-4 font-mono opacity-50">
-          Build v2.0.0
+          Build v2.1.0
         </div>
       </div>
     </footer>

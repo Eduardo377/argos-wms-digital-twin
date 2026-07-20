@@ -1,4 +1,4 @@
-export type Zone = "Hot" | "Warm" | "Cold";
+export type Zone = "Hot" | "Warm" | "Cold" | "Frozen";
 
 export type Slot = {
   id: string;
@@ -38,4 +38,4 @@ export function buildSlots(): Slot[] {
   return slots;
 }
 
-export const ZONE_OPTIONS: Zone[] = ["Hot", "Warm", "Cold"];
+export const ZONE_OPTIONS: Zone[] = ["Hot", "Warm", "Cold", "Frozen"];
