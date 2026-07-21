@@ -157,8 +157,8 @@ export function YardMap({
           );
 
           if (hasPeriodFilter) {
-            // O SEGREDO ESTÁ AQUI: A data real (DD/MM/YYYY) está mapeada em dataSaida
-            const targetDate = slot.dataSaida;
+            // Voltamos a usar dataChegada, pois o parser agora está corrigido!
+            const targetDate = slot.dataChegada;
 
             if (!targetDate || !targetDate.includes("/")) {
               matchesPeriodo = false; // Vagas vazias ou sem data válida caem fora
@@ -205,9 +205,9 @@ export function YardMap({
                 "border-primary bg-primary/20";
           }
 
-          // 3. Aplicação do Dimming (Preserva a estrutura física do grid)
+          // 3. Aplicação do Dimming
           const opacityClass = isFilteredOut
-            ? "opacity-15 grayscale transition-opacity duration-300"
+            ? "opacity-15 grayscale transition-opacity duration-300 pointer-events-none"
             : "opacity-100 transition-opacity duration-300";
 
           return (
@@ -216,36 +216,39 @@ export function YardMap({
               className={`relative flex aspect-square flex-col items-center justify-center rounded-lg border text-center transition-colors ${statusClasses} ${opacityClass}`}
               onClick={(e) => {
                 e.preventDefault();
-                if (!isOccupied && isGrabbed) {
+                if (!isOccupied && isGrabbed && !isFilteredOut) {
                   onDropSlot(slot.id);
                 }
               }}
             >
               {isOccupied ? (
-                <div className="flex h-full w-full flex-col p-2 overflow-hidden text-left">
-                  <span className="w-full truncate font-mono text-[14px] font-bold text-white border-white/10 pb-1 mb-1">
-                    {slot.label}{" "}
-                  </span>
-                  <span className="w-full truncate font-mono text-[14px] font-bold text-white border-b border-white/10 pb-1 mb-1">
-                    {isNewlyOccupied ? containerId : slot.containerId}
-                  </span>
-
-                  <div className="mt-1 flex flex-col gap-[2px]">
-                    <div className="flex justify-between text-[9px]">
-                      <span className="text-muted-foreground">Peso:</span>
-                      <span className="font-mono text-foreground">
+                <div className="flex h-full w-full flex-col justify-between p-2 text-left">
+                  {/* Cabeçalho: Endereço, Peso e ID */}
+                  <div className="mb-1 border-b border-white/10 pb-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] text-muted-foreground/80">
+                        {slot.label}
+                      </span>
+                      <span className="font-mono text-[10px] text-muted-foreground/80">
                         {slot.peso || "0"}t
                       </span>
                     </div>
-                    <div className="flex justify-between text-[9px]">
-                      <span className="text-muted-foreground">Chegada:</span>
-                      <span className="font-mono text-foreground">
+                    <div className="mt-0.5 w-full truncate font-mono text-[13px] font-bold text-white">
+                      {isNewlyOccupied ? containerId : slot.containerId}
+                    </div>
+                  </div>
+
+                  {/* Metadados: Chegada e Saída */}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex flex-col text-[9px] leading-tight">
+                      <span className="text-muted-foreground/70">Chegada:</span>
+                      <span className="truncate font-mono text-foreground">
                         {slot.dataChegada?.substring(0, 30) || "--"}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[9px]">
-                      <span className="text-muted-foreground">Saída:</span>
-                      <span className="font-mono text-foreground">
+                    <div className="flex flex-col text-[9px] leading-tight">
+                      <span className="text-muted-foreground/70">Saída:</span>
+                      <span className="truncate font-mono text-foreground">
                         {slot.dataSaida?.substring(0, 30) || "--"}
                       </span>
                     </div>

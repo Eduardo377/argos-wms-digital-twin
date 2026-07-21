@@ -88,14 +88,26 @@ export function TerminalDashboard() {
 
             const status = cols[1];
             const idContainer = cols[2];
-            const peso = cols[3];
-            const dataHora = cols[4];
-            const saidaPrevista = cols[5];
-            const zona = cols[6];
 
-            const isImoTrue = cols.some(
-              (col) => col.toUpperCase() === "TRUE" || col === "1",
-            );
+            // Correção do split para pesos com vírgula (ex: "24,5" cortado em "24" e "5")
+            let peso = cols[3];
+            let offset = 0;
+
+            // Se a próxima coluna for um número pequeno sem barra de data, o peso foi dividido
+            if (cols[4] && !cols[4].includes("/")) {
+              peso = `${cols[3]},${cols[4]}`;
+              offset = 1; // Empurra a leitura das datas uma casa pra frente
+            }
+
+            const dataHora = cols[4 + offset];
+            const saidaPrevista = cols[5 + offset];
+            const zona = cols[6 + offset];
+            const imoCol = cols[7 + offset] || "";
+
+            const isImoTrue =
+              imoCol.toUpperCase() === "SIM" ||
+              imoCol.toUpperCase() === "TRUE" ||
+              imoCol === "1";
 
             return {
               id: posId,
