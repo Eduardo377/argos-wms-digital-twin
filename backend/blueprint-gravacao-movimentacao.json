@@ -12,8 +12,8 @@
             "mapper": {},
             "metadata": {
                 "designer": {
-                    "x": -963,
-                    "y": -160
+                    "x": 0,
+                    "y": 300
                 },
                 "restore": {
                     "parameters": {
@@ -45,10 +45,10 @@
             "module": "google-sheets:filterRows",
             "version": 2,
             "parameters": {
-                "__IMTCONN__": 9097438
+                "__IMTCONN__": 9227252
             },
             "mapper": {
-                "from": "share",
+                "from": "drive",
                 "filter": [
                     [
                         {
@@ -67,32 +67,29 @@
                 "sortOrder": "asc",
                 "spreadsheetId": "1AX2MlVtQSQ5DABW5gezOgcOfvnoHHeGct6dRMt-SFYo",
                 "tableFirstRow": "A1:Z1",
-                "includesHeaders": true,
+                "includesHeaders": false,
                 "valueRenderOption": "FORMATTED_VALUE",
                 "dateTimeRenderOption": "FORMATTED_STRING"
             },
             "metadata": {
                 "designer": {
-                    "x": -624,
-                    "y": -159
+                    "x": 300,
+                    "y": 300
                 },
                 "restore": {
                     "expect": {
                         "from": {
-                            "label": "Select from all"
+                            "label": "Select from My Drive"
                         },
                         "orderBy": {
                             "mode": "chose"
-                        },
-                        "sheetId": {
-                            "mode": "chose",
-                            "label": "Página1"
                         },
                         "sortOrder": {
                             "mode": "chose",
                             "label": "Ascending"
                         },
                         "spreadsheetId": {
+                            "mode": "edit",
                             "rpcSearch": {
                                 "label": "Mapa_Patio",
                                 "value": "1AX2MlVtQSQ5DABW5gezOgcOfvnoHHeGct6dRMt-SFYo"
@@ -103,7 +100,7 @@
                         },
                         "includesHeaders": {
                             "mode": "chose",
-                            "label": "Yes"
+                            "label": "No"
                         },
                         "valueRenderOption": {
                             "mode": "chose",
@@ -120,7 +117,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "My Google connection (edutest377@gmail.com)"
+                            "label": "My Google connection"
                         }
                     }
                 },
@@ -175,13 +172,13 @@
                     },
                     {
                         "name": "spreadsheetId",
-                        "type": "text",
-                        "label": "Spreadsheet ID",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
                         "required": true
                     },
                     {
                         "name": "sheetId",
-                        "type": "select",
+                        "type": "any",
                         "label": "Sheet Name",
                         "required": true
                     },
@@ -223,7 +220,7 @@
                         "name": "filter",
                         "type": "filter",
                         "label": "Filter",
-                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=true"
+                        "options": "rpc://google-sheets/2/rpcGetFilterKeys?includesHeaders=false"
                     },
                     {
                         "name": "orderBy",
@@ -271,132 +268,132 @@
                     {
                         "name": "0",
                         "type": "text",
-                        "label": "Posicao_ID (A)"
+                        "label": "A"
                     },
                     {
                         "name": "1",
                         "type": "text",
-                        "label": "Status (B)"
+                        "label": "B"
                     },
                     {
                         "name": "2",
                         "type": "text",
-                        "label": "ID_Container (C)"
+                        "label": "C"
                     },
                     {
                         "name": "3",
                         "type": "text",
-                        "label": "Peso_ton (D)"
+                        "label": "D"
                     },
                     {
                         "name": "4",
                         "type": "text",
-                        "label": "Data_Hora (E)"
+                        "label": "E"
                     },
                     {
                         "name": "5",
                         "type": "text",
-                        "label": "Saida_hora_Prevista (F)"
+                        "label": "F"
                     },
                     {
                         "name": "6",
                         "type": "text",
-                        "label": "Zona (G)"
+                        "label": "G"
                     },
                     {
                         "name": "7",
                         "type": "text",
-                        "label": "IMO (H)"
+                        "label": "H"
                     },
                     {
                         "name": "8",
                         "type": "text",
-                        "label": "(I)"
+                        "label": "I"
                     },
                     {
                         "name": "9",
                         "type": "text",
-                        "label": "(J)"
+                        "label": "J"
                     },
                     {
                         "name": "10",
                         "type": "text",
-                        "label": "(K)"
+                        "label": "K"
                     },
                     {
                         "name": "11",
                         "type": "text",
-                        "label": "(L)"
+                        "label": "L"
                     },
                     {
                         "name": "12",
                         "type": "text",
-                        "label": "(M)"
+                        "label": "M"
                     },
                     {
                         "name": "13",
                         "type": "text",
-                        "label": "(N)"
+                        "label": "N"
                     },
                     {
                         "name": "14",
                         "type": "text",
-                        "label": "(O)"
+                        "label": "O"
                     },
                     {
                         "name": "15",
                         "type": "text",
-                        "label": "(P)"
+                        "label": "P"
                     },
                     {
                         "name": "16",
                         "type": "text",
-                        "label": "(Q)"
+                        "label": "Q"
                     },
                     {
                         "name": "17",
                         "type": "text",
-                        "label": "(R)"
+                        "label": "R"
                     },
                     {
                         "name": "18",
                         "type": "text",
-                        "label": "(S)"
+                        "label": "S"
                     },
                     {
                         "name": "19",
                         "type": "text",
-                        "label": "(T)"
+                        "label": "T"
                     },
                     {
                         "name": "20",
                         "type": "text",
-                        "label": "(U)"
+                        "label": "U"
                     },
                     {
                         "name": "21",
                         "type": "text",
-                        "label": "(V)"
+                        "label": "V"
                     },
                     {
                         "name": "22",
                         "type": "text",
-                        "label": "(W)"
+                        "label": "W"
                     },
                     {
                         "name": "23",
                         "type": "text",
-                        "label": "(X)"
+                        "label": "X"
                     },
                     {
                         "name": "24",
                         "type": "text",
-                        "label": "(Y)"
+                        "label": "Y"
                     },
                     {
                         "name": "25",
                         "type": "text",
-                        "label": "(Z)"
+                        "label": "Z"
                     }
                 ]
             }
@@ -408,8 +405,8 @@
             "mapper": null,
             "metadata": {
                 "designer": {
-                    "x": -324,
-                    "y": -159
+                    "x": 600,
+                    "y": 300
                 }
             },
             "branches": [
@@ -432,8 +429,10 @@
                                     "Zona": "{{12.zona}}",
                                     "Status": "{{12.status}}",
                                     "Peso_ton": "{{12.peso_ton}}",
+                                    "Data_Hora": "{{12.data_hora_chegada}}",
                                     "Posicao_ID": "{{12.vaga_confirmada}}",
                                     "ID_Container": "{{12.id_conteiner}}",
+                                    "Justificativa": "{{12.justificativa}}",
                                     "Saida_hora_Prevista": "{{12.data_saida_prevista}}"
                                 },
                                 "sheetId": "Página1",
@@ -445,8 +444,8 @@
                             },
                             "metadata": {
                                 "designer": {
-                                    "x": -24,
-                                    "y": -459
+                                    "x": 900,
+                                    "y": 0
                                 },
                                 "restore": {
                                     "expect": {
@@ -504,6 +503,7 @@
                                         "name": "valueInputOption",
                                         "type": "select",
                                         "label": "Value input option",
+                                        "required": true,
                                         "validate": {
                                             "enum": [
                                                 "USER_ENTERED",
@@ -596,6 +596,11 @@
                                                 "name": "IMO",
                                                 "type": "text",
                                                 "label": "IMO (H)"
+                                            },
+                                            {
+                                                "name": "Justificativa",
+                                                "type": "text",
+                                                "label": "Justificativa (I)"
                                             }
                                         ],
                                         "type": "collection",
@@ -610,7 +615,8 @@
                                                     "Data_Hora",
                                                     "Saida_hora_Prevista",
                                                     "Zona",
-                                                    "IMO"
+                                                    "IMO",
+                                                    "Justificativa"
                                                 ]
                                             ]
                                         ]
@@ -625,37 +631,28 @@
                             "parameters": {
                                 "__IMTCONN__": 9097506
                             },
-                            "filter": {
-                                "name": "",
-                                "conditions": [
-                                    [
-                                        {
-                                            "a": "{{3.`0`}}",
-                                            "b": "{{12.vaga_confirmada}}",
-                                            "o": "text:equal"
-                                        }
-                                    ]
-                                ]
-                            },
                             "mapper": {
                                 "mode": "fromAll",
                                 "values": {
-                                    "0": "{{var.scenario.executionId}}",
-                                    "2": "{{12.id_conteiner}}",
-                                    "4": "Alocado"
+                                    "Ação": "{{12.status}}",
+                                    "Log_ID": "{{var.scenario.executionId}}",
+                                    "Data_hora": "{{12.data_hora_chegada}}",
+                                    "ID_Conteiner": "{{12.id_conteiner}}",
+                                    "Posicao_Destino": "{{12.vaga_confirmada}}",
+                                    "Observação Física": "{{12.justificativa}}"
                                 },
                                 "sheetId": "Página1",
                                 "spreadsheetId": "1JgTZGj_9GDDMn5DL59GTh3D4hxod50JExYubB2gn2YQ",
                                 "includesHeaders": true,
                                 "insertDataOption": "INSERT_ROWS",
-                                "useColumnHeaders": false,
+                                "useColumnHeaders": true,
                                 "valueInputOption": "USER_ENTERED",
                                 "insertUnformatted": false
                             },
                             "metadata": {
                                 "designer": {
-                                    "x": 276,
-                                    "y": -459
+                                    "x": 1200,
+                                    "y": 0
                                 },
                                 "restore": {
                                     "expect": {
@@ -674,7 +671,7 @@
                                             "label": "Insert rows"
                                         },
                                         "useColumnHeaders": {
-                                            "label": "No"
+                                            "label": "Yes"
                                         },
                                         "valueInputOption": {
                                             "mode": "chose",
@@ -785,134 +782,34 @@
                                         "name": "values",
                                         "spec": [
                                             {
-                                                "name": "0",
+                                                "name": "Log_ID",
                                                 "type": "text",
                                                 "label": "Log_ID (A)"
                                             },
                                             {
-                                                "name": "1",
+                                                "name": "Data_hora",
                                                 "type": "text",
                                                 "label": "Data_hora (B)"
                                             },
                                             {
-                                                "name": "2",
+                                                "name": "ID_Conteiner",
                                                 "type": "text",
                                                 "label": "ID_Conteiner (C)"
                                             },
                                             {
-                                                "name": "3",
+                                                "name": "Posicao_Destino",
                                                 "type": "text",
                                                 "label": "Posicao_Destino (D)"
                                             },
                                             {
-                                                "name": "4",
+                                                "name": "Ação",
                                                 "type": "text",
                                                 "label": "Ação (E)"
                                             },
                                             {
-                                                "name": "5",
+                                                "name": "Observação Física",
                                                 "type": "text",
                                                 "label": "Observação Física (F)"
-                                            },
-                                            {
-                                                "name": "6",
-                                                "type": "text",
-                                                "label": "(G)"
-                                            },
-                                            {
-                                                "name": "7",
-                                                "type": "text",
-                                                "label": "(H)"
-                                            },
-                                            {
-                                                "name": "8",
-                                                "type": "text",
-                                                "label": "(I)"
-                                            },
-                                            {
-                                                "name": "9",
-                                                "type": "text",
-                                                "label": "(J)"
-                                            },
-                                            {
-                                                "name": "10",
-                                                "type": "text",
-                                                "label": "(K)"
-                                            },
-                                            {
-                                                "name": "11",
-                                                "type": "text",
-                                                "label": "(L)"
-                                            },
-                                            {
-                                                "name": "12",
-                                                "type": "text",
-                                                "label": "(M)"
-                                            },
-                                            {
-                                                "name": "13",
-                                                "type": "text",
-                                                "label": "(N)"
-                                            },
-                                            {
-                                                "name": "14",
-                                                "type": "text",
-                                                "label": "(O)"
-                                            },
-                                            {
-                                                "name": "15",
-                                                "type": "text",
-                                                "label": "(P)"
-                                            },
-                                            {
-                                                "name": "16",
-                                                "type": "text",
-                                                "label": "(Q)"
-                                            },
-                                            {
-                                                "name": "17",
-                                                "type": "text",
-                                                "label": "(R)"
-                                            },
-                                            {
-                                                "name": "18",
-                                                "type": "text",
-                                                "label": "(S)"
-                                            },
-                                            {
-                                                "name": "19",
-                                                "type": "text",
-                                                "label": "(T)"
-                                            },
-                                            {
-                                                "name": "20",
-                                                "type": "text",
-                                                "label": "(U)"
-                                            },
-                                            {
-                                                "name": "21",
-                                                "type": "text",
-                                                "label": "(V)"
-                                            },
-                                            {
-                                                "name": "22",
-                                                "type": "text",
-                                                "label": "(W)"
-                                            },
-                                            {
-                                                "name": "23",
-                                                "type": "text",
-                                                "label": "(X)"
-                                            },
-                                            {
-                                                "name": "24",
-                                                "type": "text",
-                                                "label": "(Y)"
-                                            },
-                                            {
-                                                "name": "25",
-                                                "type": "text",
-                                                "label": "(Z)"
                                             }
                                         ],
                                         "type": "collection",
@@ -954,8 +851,8 @@
                             },
                             "metadata": {
                                 "designer": {
-                                    "x": 576,
-                                    "y": -459
+                                    "x": 1500,
+                                    "y": 0
                                 },
                                 "restore": {
                                     "expect": {
@@ -1019,6 +916,10 @@
                     "conditions": [
                         [
                             {
+                                "a": "{{3.`__ROW_NUMBER__`}}",
+                                "o": "exist"
+                            },
+                            {
                                 "a": "{{3.`1`}}",
                                 "b": "Livre",
                                 "o": "text:equal"
@@ -1043,7 +944,10 @@
                                 "values": {
                                     "Ação": "{{12.status}}",
                                     "Log_ID": "{{var.scenario.executionId}}",
-                                    "ID_Conteiner": "{{12.id_conteiner}}"
+                                    "Data_hora": "{{12.data_hora_chegada}}",
+                                    "ID_Conteiner": "{{12.id_conteiner}}",
+                                    "Posicao_Destino": "{{12.vaga_confirmada}}",
+                                    "Observação Física": "{{12.justificativa}}"
                                 },
                                 "sheetId": "Página1",
                                 "spreadsheetId": "1uiFxmC3opqFBwsbVtqouCJXSvqaxyhlSDDCnl7wIzhY",
@@ -1055,8 +959,8 @@
                             },
                             "metadata": {
                                 "designer": {
-                                    "x": -24,
-                                    "y": -159
+                                    "x": 900,
+                                    "y": 300
                                 },
                                 "restore": {
                                     "expect": {
@@ -1246,8 +1150,8 @@
                             },
                             "metadata": {
                                 "designer": {
-                                    "x": 276,
-                                    "y": -159
+                                    "x": 1200,
+                                    "y": 300
                                 },
                                 "restore": {
                                     "expect": {
@@ -1306,6 +1210,10 @@
                     "conditions": [
                         [
                             {
+                                "a": "{{3.`__ROW_NUMBER__`}}",
+                                "o": "notexist"
+                            },
+                            {
                                 "a": "{{3.`1`}}",
                                 "b": "Livre",
                                 "o": "text:notequal"
@@ -1325,8 +1233,8 @@
                             "filter": null,
                             "metadata": {
                                 "designer": {
-                                    "x": -24,
-                                    "y": 141
+                                    "x": 900,
+                                    "y": 600
                                 }
                             }
                         }
