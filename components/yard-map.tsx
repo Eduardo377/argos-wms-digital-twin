@@ -198,9 +198,9 @@ export function YardMap({
             }
 
             if (isOccupied) {
+              const slotZone = slot.id.split("-")[0].toUpperCase();
               statusClasses = `${
-                zoneBgColors[slot.zone?.toUpperCase() || "HOT"] ||
-                "border-primary bg-primary/20"
+                zoneBgColors[slotZone] || "border-primary bg-primary/20"
               } cursor-help`;
             }
 
