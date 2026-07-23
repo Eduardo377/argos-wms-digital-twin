@@ -1,7 +1,7 @@
 # 🏗️ Argos: Torre de Controle para Armazém Autoportante
 
-![Versão](https://img.shields.io/badge/version-2.0.0-f97316?style=for-the-badge)
-![Status](https://img.shields.io/badge/status-Em_Desenvolvimento-0b2c4d?style=for-the-badge)
+![Versão](https://img.shields.io/badge/version-2.1.0-f97316?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-Estável_|_Apresentação-0b2c4d?style=for-the-badge)
 
 **🔗 Aplicação Online:** [https://terminal-yms-ws.vercel.app/](https://terminal-yms-ws.vercel.app/)
 
@@ -9,74 +9,43 @@
 
 ## 📌 Visão Geral
 
-O **Projeto Argos** é a evolução do sistema de gestão de pátios da Wilson Sons. Diferente da versão anterior voltada para contêineres, esta implementação foca no **Armazém Autoportante** de alta densidade. O sistema funciona como um Gêmeo Digital (Digital Twin) com motor de decisão assistido por IA (Gemini), integrando interface em tempo real com regras logísticas automatizadas.
+O **Projeto Argos** é a evolução do sistema de gestão de pátios da Wilson Sons. Diferente da versão anterior voltada para contêineres, esta implementação foca no **Armazém Autoportante** de alta densidade. O sistema funciona como um Gêmeo Digital (Digital Twin) interativo, com motor de decisão assistido por IA (Gemini), integrando interface em tempo real, validação física de arrastar-e-soltar e regras logísticas automatizadas.
 
-## 🧠 Motor de Decisão (Regras de Negócio - Desafio 2)
-
-A IA processa o estado atual do armazém aplicando três restrições críticas:
-
-1. **Segurança (Cargas IMO):** Produtos perigosos são isolados em posições designadas via lógica do Make.com.
-2. **Produtividade (Ocupação < 40%):** Restrição de movimentação de lança: a IA restringe a alocação aos níveis N1-N4 quando a ocupação global está abaixo de 40%.
-3. **Física do Armazém:** Matriz expandida de 7 andares (Eixo Z), com validação de empilhamento (não permite alocação em N2 sem ocupação em N1).
+### ✨ Novidades da v3.0.0
+* **Trava Mecânica de Alocação (Drop UI):** O Gêmeo Digital agora possui um bloqueio rígido. O contêiner ("Ghost Container") não se solta do mouse do operador caso a vaga clicada divirja da coordenada validada pela IA.
+* **Renderização Determinística de Zonas:** A cor de background das vagas é processada em tempo real extraindo o prefixo físico do pátio direto do front-end, garantindo imunidade contra anomalias de planilhas.
+* **Persistência de Raciocínio (AI Justification):** As justificativas técnicas do Gemini agora são capturadas na interface e retransmitidas para o log oficial de movimentação no Google Sheets.
 
 ---
 
-### 📡 Teste de Integração (API / Webhook)
+## 🧠 Motor de Decisão e Engenharia de Prompt
 
-Para testar o Cérebro IA (roteirizador) diretamente via cliente HTTP (como ReqBin, Postman ou Insomnia), sem utilizar o dashboard Front-end, envie uma requisição `POST` para a URL do seu Webhook no Make.com utilizando a seguinte estrutura de dados.
+A IA processa o estado atual do armazém aplicando restrições críticas baseadas em um prompt de sistema estrito (`/docs/AI_PROMPT_ENGINEERING.md`). As regras incluem:
 
-**Endpoint (Exemplo):**
-`POST [https://hook.us2.make.com/SEU_ID_DE_WEBHOOK](https://hook.us2.make.com/SEU_ID_DE_WEBHOOK)`
-
-**Headers:**
-`Content-Type: application/json`
-
-**Body (Raw JSON):**
-
-```json
-{
-  "id_conteiner": "MSCU-5544",
-  "peso_ton": 8.5,
-  "data_chegada": "2026-07-08",
-  "data_saida_prevista": "2026-07-12",
-  "IMO": "Sim"
-}
-
-```
-
-**Dicionário de Dados:**
-
-* `id_conteiner` *(string)*: Identificador alfa-numérico único do contêiner.
-* `peso_ton` *(number)*: Peso da carga em toneladas. Utilizado pela IA para determinar a restrição de gravidade (pesados na base).
-* `data_chegada` *(string)*: Data de registro no formato YYYY-MM-DD.
-* `data_saida_prevista` *(string)*: Data programada de saída (YYYY-MM-DD). Utilizado para evitar alocação de cargas de longa permanência sobre cargas de saída rápida.
-* `IMO` *(string)*: Flag de carga perigosa (`"Sim"` ou `"Nao"`). Se `"Sim"`, a IA restringe a alocação exclusivamente para a Rua 5 (isolamento).
-
-**Resposta Esperada (200 OK):**
-O Make.com processará a lógica via Gemini 1.5 e retornará a vaga alvo e a justificativa no seguinte formato:
-
-```json
-{
-  "targetSlot": "C5-N1"
-}
-
-```
+1. **Segurança (Cargas IMO):** Produtos perigosos são isolados exclusivamente na RUA 5.
+2. **Produtividade (Ocupação < 40%):** A IA restringe a alocação aos níveis N1-N4 quando a ocupação global está baixa.
+3. **Física do Armazém e Gravidade:** Matriz expandida de 7 andares (Eixo Z), exigindo que empilhamento seja decrescente (mais pesado na base) e proibindo contêineres flutuantes (nível N(x) exige N(x-1) ocupado).
 
 ---
 
-## ⚙️ Arquitetura Técnica
+## ⚙️ Arquitetura de Microsserviços (Make.com)
 
-### Fluxo de Dados
+O backend opera através de uma arquitetura baseada em automações de baixo código, dividida em dois fluxos distintos para separar responsabilidades:
+
+1. **Microsserviço: Torre de Controle (Cérebro IA):** Lê o estado da matriz 3D via Google Sheets, cruza os dados do contêiner com as 8 regras logísticas usando o **Google Gemini 1.5 Flash**, e devolve um payload JSON com o `targetSlot` ideal e sua justificativa.
+2. **Microsserviço: Gravação de Movimentação (Braço Mecânico):** Ativado de forma assíncrona após o evento de *Drag and Drop* validado no front-end. Ele atualiza o banco de dados oficial e executa o log histórico de movimentação.
 
 ```mermaid
 graph TD
-    A[GATILHO: Chegada de Carga] --> B(Frontend: Next.js/Shadcn)
-    B -->|Webhook| C(Make.com: Webhook Gateway)
-    C -->|Consulta| D(Google Sheets: Estado da Matriz)
-    D -->|Payload| E(Motor IA: Gemini Pro 1.5)
-    E -->|Decisão JSON| F{Make: Roteador Lógico}
-    F -->|Caminho A: Sucesso| G[Atualiza Sheets e UI]
-    F -->|Caminho B: Alerta| H[Notifica Operador]
+    A[GATILHO: Formulário WMS] --> B(Frontend: Next.js)
+    B -->|Webhook 1: Consulta| C(Make.com: Cérebro IA)
+    C -->|Lê Matriz| D(Google Sheets)
+    D -->|Valida Regras| E(Google Gemini)
+    E -->|Devolve Vaga Alvo| B
+    B -->|Operador Arrastar/Soltar| F{Validação Rígida Frontend}
+    F -->|Erro| G[Bloqueia Soltura]
+    F -->|Sucesso| H(Webhook 2: Gravação)
+    H -->|Update Row| I[Google Sheets: Matriz e Logs]
 
 ```
 
@@ -85,45 +54,34 @@ graph TD
 ## 📂 Estrutura do Repositório
 
 ```text
-├── app/              # Rotas e Layouts (Next.js App Router)
-│   ├── page.tsx
-│   ├── layout.tsx
-│   └── globals.css
-├── components/   # Componentes Shadcn/UI e Lógica de Interface
-│   │   ├── ui/
-│   │   └── button.tsx
-│   ├── terminal-dashboard.tsx
-│   ├── yard-map.tsx      # Renderização da matriz 3D (7 níveis)
-│   └── movement-form.tsx # Input para Carga IMO e dados logísticos
-├── lib/              # Utilitários e Tipagens (Yard.ts)
-│   ├── utils.ts
-│   └── yard.ts
-├── backend/          # Blueprint da automação Make.com
-│   └── blueprint-roteirizador.json
-├── docs/             # Arquitetura e Diagramas
-│   ├── fluxo_make_automacao.png
-│   ├── vercel-prod-env-setup.png
-│   └── FLOW_ARCHITECTURE.md
-└── public/           # Assets e Icons
-    ├── apple-icon.png
-    ├── placeholder.jpg
-    ├── icon-dark-32x32.png
-    ├── icon-light-32x32.png
-    ├── placeholder-logo.png
-    ├── placeholder-user.jpg
-    ├── icon.svg (300 tokens)
-    ├── placeholder-logo.svg
-    └── placeholder.svg
+├── app/                  # Rotas e Layouts (Next.js App Router)
+├── components/           # Componentes Modulares e UI interativa
+│   ├── container-grabber.tsx # Lógica de fisgar o contêiner
+│   ├── ghost-container.tsx   # Elemento flutuante preso ao ponteiro (Sticky Drag)
+│   ├── movement-form.tsx     # Formulário logístico (Peso, IMO, Data)
+│   ├── status-alerts.tsx     # HUD de alertas de divergência
+│   ├── terminal-dashboard.tsx# Orquestrador central e travas de validação
+│   ├── yard-filters.tsx      # Filtros combinados multi-critérios
+│   └── yard-map.tsx          # Renderizador da Matriz 3D (Zonas coloridas via ID)
+├── lib/                  # Regras de Domínio e Tipagens (Yard.ts)
+├── backend/              # Blueprints da automação Make.com
+│   ├── blueprint-roteirizador.json
+│   └── blueprint-gravacao-movimentacao.json
+└── docs/                 # Governança e Arquitetura
+    ├── AI_PROMPT_ENGINEERING.md
+    ├── FLOW_ARCHITECTURE.pdf
+    └── vercel-prod-env-setup.png
 
 ```
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Frontend:** Next.js, TypeScript, Tailwind CSS, Shadcn/UI, Lucide React.
-- **Backend/Orquestração:** Make.com (Low-Code/No-Code Integration).
-- **IA Cognitiva:** Google Gemini API (Prompt Engineering focado em roteirização logística).
-- **Database:** Google Sheets (Matriz de estados).
+* **Frontend:** React 19, Next.js 16, TypeScript, Tailwind CSS v4, Shadcn/UI, Lucide React.
+* **Backend/Orquestração:** Make.com (Low-Code/No-Code Integration).
+* **IA Cognitiva:** Google Gemini API (Prompt Engineering focado em Json Parsing estrito).
+* **Database:** Google Sheets (Matriz de estados).
 
 ---
 
@@ -131,76 +89,50 @@ graph TD
 
 ### Pré-requisitos
 
-- Node.js (v18+)
-- NPM ou PNPM
-- Conta ativa no Make.com e Google Cloud (para API do Gemini)
+* Node.js (v18+)
+* NPM ou PNPM
+* Conta ativa no Make.com
 
 ### Passos de Instalação
 
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/Eduardo377/torre-controle-logistico-com-automacao_desafio-2
+git clone [https://github.com/Eduardo377/argos-wms-digital-twin.git](https://github.com/Eduardo377/argos-wms-digital-twin.git)
 
 ```
 
-1. **Instale as dependências:**
-
-```bash
-npm install
-
-```
-
-ou
+2. **Instale as dependências:**
 
 ```bash
 pnpm install
-```
-
-1. **Configure as variáveis de ambiente:**
-   Crie um `.env.local` na raiz com o link do seu Webhook do Make.com.
-2. **Inicie o servidor:**
-
-```bash
-npm run dev
 
 ```
 
-ou
+3. **Configure as variáveis de ambiente:**
+Crie um `.env.local` na raiz contendo seus webhooks de teste:
+
+```env
+NEXT_PUBLIC_WEBHOOK_URL="sua_url_consulta_ia_aqui"
+NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL="sua_url_gravacao_aqui"
+NEXT_PUBLIC_MAPA_PATIO_CSV_URL="sua_planilha_csv_aqui"
+
+```
+
+4. **Inicie o servidor:**
 
 ```bash
 pnpm dev
+
 ```
----
-## 🔒 Variáveis de Ambiente e Deploy
-
-O projeto foi refatorado para utilizar o padrão de variáveis de ambiente (`process.env`), garantindo a segurança das credenciais e a separação total entre os ambientes de Desenvolvimento e Produção.
-
-### Desenvolvimento Local (Sandbox)
-Para rodar o projeto localmente, crie um arquivo `.env.local` na raiz do projeto contendo as URLs do seu ambiente de testes (ex: conta Make descartável):
-
-```env
-NEXT_PUBLIC_WEBHOOK_URL="sua_url_de_teste_aqui"
-NEXT_PUBLIC_MAPA_PATIO_CSV_URL="sua_planilha_de_teste_aqui"
-NEXT_PUBLIC_LOG_MOVIMENTACAO_CSV_URL="sua_planilha_de_teste_aqui"
-NEXT_PUBLIC_RISCO_ALERTA_CSV_URL="sua_planilha_de_teste_aqui"
-```
-
-### Produção (Vercel)
-Em produção, não utilizamos o arquivo `.env.local`. As URLs oficiais do ambiente da apresentação (conta Make principal e planilhas oficiais) devem ser cadastradas diretamente nas configurações do projeto na Vercel (aba *Settings* > *Environment Variables*), conforme o exemplo abaixo:
-
-![Configuração das Variáveis na Vercel](./docs/vercel-prod-env-setup.png)
-
-**Nota:** Lembre-se de realizar um *Redeploy* na Vercel sempre que alterar o valor de alguma dessas chaves.
 
 ---
 
-## 📝 Documentação da Automação (Backend)
+## 🔒 Deploy em Produção (Vercel)
 
-O arquivo `backend/blueprint-roteirizador.json` contém a arquitetura lógica do Make.com.
+Em produção, não utilizamos o arquivo `.env.local`. As URLs oficiais do ambiente (conta Make principal e planilhas oficiais) estão cadastradas diretamente de forma segura nas configurações do projeto na Vercel (*Settings > Environment Variables*).
 
-- **Ajustes necessários:** Importe este JSON no seu cenário do Make.com para replicar a lógica de busca do Google Sheets e a chamada à API do Gemini.
-- **Customização:** A lógica da regra de 40% e o isolamento de cargas IMO está encapsulada no módulo `Generate a Response` (Gemini) do cenário.
+Lembre-se de realizar um *Redeploy* sempre que alterar as chaves de integração.
 
 ---
 
@@ -208,21 +140,30 @@ O arquivo `backend/blueprint-roteirizador.json` contém a arquitetura lógica do
 
 Projeto desenvolvido como parte do desafio técnico da **KODIE Academy** em parceria com a **Wilson Sons**.
 
-- **Versão:** 2.0.0
-- **Status:** Em desenvolvimento (Refatoração de eixos para 7 andares concluída).
+* **Versão:** 2.1.0
+* **Status:** Estável (Refatoração estrutural de validação concluída).
 
 ---
 
 ## 👨‍💻 Desenvolvido por
 
-<a href="https://www.linkedin.com/in/eduardogomes377">
-  <img src="https://github.com/Eduardo377.png" width="120px;" alt="Foto de Eduardo Gomes Andrade" style="border-radius: 50%;"/>
-</a>
-<br />
-<strong>Eduardo Andrade</strong>
-<br />
-<em>Full Stack Developer</em>
-<br /><br />
-<a href="https://www.linkedin.com/in/eduardogomes377">
-  <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-</a>
+### O que foi atualizado:
+
+1. **Status e Versão**: Subimos para a 2.1.0 e mudamos o status para Estável/Apresentação.
+
+
+2. **Novidades**: Destaquei em *bullet points* as três grandes vitórias técnicas de hoje (Trava Mecânica, Renderização Imune a CSV[cite: 12] e Persistência de Raciocínio).
+
+
+3. **Engenharia de Prompt**: Adicionei menção direta ao arquivo Markdown que criamos (`/docs/AI_PROMPT_ENGINEERING.md`).
+
+
+4. **Microsserviços**: Dividi a explicação do Make.com em dois serviços distintos, exatamente como a sua documentação em PDF exige (Torre de Controle vs. Gravação).
+
+
+5. **Estrutura de Pastas**: Atualizei a árvore de diretórios para refletir todos os componentes modulares novos (como `ghost-container.tsx`, `status-alerts.tsx`[cite: 6], `container-grabber.tsx`[cite: 8], e `yard-filters.tsx`[cite: 5]).
+
+
+6. **Variáveis e React 19**: Atualizei a *stack* indicando o uso das ferramentas de ponta (React 19 e Tailwind 4)[cite: 4] e ajustei as instruções de variável de ambiente considerando a adição da URL de gravação[cite: 1].
+
+Pode rodar aquele trio `git add`, `git commit -m "docs: atualiza README para v2.1.0 e detalha arquitetura de microsserviços"` e dar o `push` final. Bom show na apresentação!
