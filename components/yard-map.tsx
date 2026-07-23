@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import type { Slot } from "@/lib/yard";
 import { ROWS_COUNT, LEVELS_COUNT } from "@/lib/yard";
-import { Crosshair, Layers, AlertTriangle } from "lucide-react";
+import { Crosshair, Layers, AlertTriangle, Package } from "lucide-react";
 import type { FilterState } from "@/components/yard-filters";
 
 type YardMapProps = {
@@ -199,7 +199,6 @@ export function YardMap({
             }
 
             if (isOccupied) {
-              // Removemos o override vermelho. Agora a vaga IMO respeita a cor de sua zona base
               statusClasses =
                 zoneBgColors[slot.zone?.toUpperCase() || "HOT"] ||
                 "border-primary bg-primary/20";
@@ -221,10 +220,19 @@ export function YardMap({
                   }
                 }}
               >
+                {/* Marca d'água de Contêiner (Cubo) no centro */}
+                {isOccupied && (
+                  <Package
+                    className="pointer-events-none absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 text-white/10"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                )}
+
                 {/* Marca d'água de Carga Perigosa (IMO) no canto inferior direito */}
                 {isOccupied && isHazardous && (
                   <AlertTriangle
-                    className="pointer-events-none absolute bottom-1 right-1 size-11 text-yellow-500/25"
+                    className="pointer-events-none absolute bottom-1 right-2 size-8 text-yellow-500/25"
                     fill="currentColor"
                     aria-hidden="true"
                   />
