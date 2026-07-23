@@ -4,7 +4,6 @@ import {
   Calendar,
   AlertTriangle,
   Thermometer,
-  ArrowUpDown,
 } from "lucide-react";
 import type { Zone } from "@/lib/yard";
 
@@ -16,12 +15,6 @@ export type FilterState = {
   isIMO: "Todos" | "Sim" | "Nao";
   dataInicio: string;
   dataFim: string;
-  sortBy:
-    | "nenhum"
-    | "chegada_asc"
-    | "chegada_desc"
-    | "saida_asc"
-    | "saida_desc";
 };
 
 type YardFiltersProps = {
@@ -43,27 +36,7 @@ export function YardFilters({ filters, onChange }: YardFiltersProps) {
       <div className="flex items-center justify-between border-b border-border/50 pb-3">
         <div className="flex items-center gap-2">
           <Filter className="size-5 text-primary" aria-hidden="true" />
-          <h3 className="font-semibold text-foreground">Busca Refinada</h3>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <ArrowUpDown
-            className="size-4 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <select
-            value={filters.sortBy}
-            onChange={(e) =>
-              onChange({ sortBy: e.target.value as FilterState["sortBy"] })
-            }
-            className="h-8 rounded border border-input bg-background px-2 text-xs text-foreground focus:border-primary focus:outline-none"
-          >
-            <option value="nenhum">Ordenação Padrão</option>
-            <option value="chegada_asc">Chegada (Crescente)</option>
-            <option value="chegada_desc">Chegada (Decrescente)</option>
-            <option value="saida_asc">Saída (Crescente)</option>
-            <option value="saida_desc">Saída (Decrescente)</option>
-          </select>
+          <h3 className="font-semibold text-foreground">Filtro</h3>
         </div>
       </div>
 

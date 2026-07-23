@@ -47,7 +47,6 @@ export function TerminalDashboard() {
     isIMO: "Todos",
     dataInicio: "",
     dataFim: "",
-    sortBy: "nenhum",
   });
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
