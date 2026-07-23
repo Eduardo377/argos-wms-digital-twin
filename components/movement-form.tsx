@@ -1,7 +1,6 @@
 "use client";
 
 import type { MovementData, Zone } from "@/lib/yard";
-import { ZONE_OPTIONS } from "@/lib/yard";
 import {
   BrainCircuit,
   Container,

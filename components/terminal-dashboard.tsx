@@ -9,13 +9,6 @@ import { GhostContainer } from "@/components/ghost-container";
 import { ContainerGrabber } from "@/components/container-grabber";
 import { StatusAlerts } from "@/components/status-alerts";
 import { YardFilters, type FilterState } from "@/components/yard-filters";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  GripVertical,
-  Package,
-  X,
-} from "lucide-react";
 
 type Result = { kind: "success" | "risk"; slot: string } | null;
 
@@ -34,6 +27,9 @@ export function TerminalDashboard() {
   const [containerReady, setContainerReady] = useState(false);
   const [result, setResult] = useState<Result>(null);
   const [allocationError, setAllocationError] = useState<string | null>(null);
+
+  // NOVO ESTADO: Guardar a justificativa da IA para usar na gravação
+  const [aiJustification, setAiJustification] = useState<string | null>(null);
 
   // Estados do Guindaste (Sticky Drag)
   const [isGrabbed, setIsGrabbed] = useState(false);
@@ -129,6 +125,7 @@ export function TerminalDashboard() {
     }
     fetchYardMap();
   }, [MAPA_PATIO_CSV_URL]);
+
   type WebhookResponse = {
     targetSlot?: string;
     justificativa?: string;
@@ -144,6 +141,7 @@ export function TerminalDashboard() {
     setTargetId(null);
     setContainerReady(false);
     setIsGrabbed(false);
+    setAiJustification(null); // Reseta a justificativa a cada nova consulta
 
     try {
       const payload = {
@@ -196,6 +194,11 @@ export function TerminalDashboard() {
 
       if (chosen) {
         setTargetId(chosen.id);
+        // SALVA a justificativa no estado para usar depois na gravação
+        setAiJustification(
+          responseData.justificativa ||
+            "Alocação sugerida sem justificativa adicional.",
+        );
         setContainerReady(true);
       } else {
         setAllocationError(
@@ -231,15 +234,21 @@ export function TerminalDashboard() {
       slot: slotId,
     });
 
+    // Extrai a zona real direto do prefixo da vaga (ex: "FROZEN-E1-N1" -> "FROZEN")
+    const realZone = slotId.split("-")[0];
+
     try {
       const payloadGravacao = {
         vaga_confirmada: slotId,
         id_conteiner: displayId,
         peso_ton: Number(data.weight),
+        data_hora_chegada: new Date().toLocaleString("pt-BR"),
         data_saida_prevista: data.departure,
         IMO: data.isIMO,
-        zona: data.zone,
+        zona: realZone, // <-- CORRIGIDO AQUI: Usa a zona real da vaga e não do form
         status: "Ocupado",
+        justificativa:
+          aiJustification || "Alocação manual (Fora do alvo da IA)",
       };
 
       const WEBHOOK_GRAVACAO = process.env.NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL!;
