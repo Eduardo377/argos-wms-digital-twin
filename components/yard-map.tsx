@@ -3,14 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Slot } from "@/lib/yard";
 import { ROWS_COUNT, LEVELS_COUNT } from "@/lib/yard";
-import {
-  Crosshair,
-  Layers,
-  AlertTriangle,
-  Package,
-  X,
-  Info,
-} from "lucide-react";
+import { Crosshair, Layers, AlertTriangle, Package, Info } from "lucide-react";
 import type { FilterState } from "@/components/yard-filters";
 
 type YardMapProps = {
@@ -33,7 +26,7 @@ export function YardMap({
   filters,
 }: YardMapProps) {
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
-  const [selectedDetails, setSelectedDetails] = useState<Slot | null>(null);
+  const [hoveredDetails, setHoveredDetails] = useState<Slot | null>(null);
 
   useEffect(() => {
     if (targetId) {
@@ -128,7 +121,7 @@ export function YardMap({
 
             const isHazardous = slot.isIMO === true;
 
-            // 1. Processamento Multi-Filtros para o Dimming
+            // 1. Processamento Multi-Filtros
             const matchesSearch =
               filters.searchId === "" ||
               slot.containerId
@@ -197,18 +190,18 @@ export function YardMap({
 
             // 2. Cores da Vaga
             let statusClasses =
-              "border-border bg-background/40 hover:border-primary/40 cursor-pointer";
+              "border-border bg-background/40 hover:border-primary/40 cursor-default";
 
             if (isTarget) {
               statusClasses =
-                "animate-target-pulse border-primary bg-primary/5 cursor-pointer";
+                "animate-target-pulse border-primary bg-primary/5 cursor-crosshair";
             }
 
             if (isOccupied) {
               statusClasses = `${
                 zoneBgColors[slot.zone?.toUpperCase() || "HOT"] ||
                 "border-primary bg-primary/20"
-              } cursor-pointer`;
+              } cursor-help`;
             }
 
             // 3. Aplicação do Dimming
@@ -220,13 +213,16 @@ export function YardMap({
               <div
                 key={slot.id}
                 className={`relative flex aspect-square flex-col items-center justify-center overflow-hidden rounded-lg border text-center transition-colors ${statusClasses} ${opacityClass}`}
+                onMouseEnter={() => {
+                  if (isOccupied) setHoveredDetails(slot);
+                }}
+                onMouseLeave={() => {
+                  if (isOccupied) setHoveredDetails(null);
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   if (!isOccupied && isGrabbed && !isFilteredOut) {
                     onDropSlot(slot.id);
-                  } else if (isOccupied) {
-                    // Ao clicar em uma vaga ocupada, abre o modal
-                    setSelectedDetails(slot);
                   }
                 }}
               >
@@ -292,98 +288,76 @@ export function YardMap({
         </div>
       </div>
 
-      {/* Modal de Detalhes do Contêiner */}
-      {selectedDetails && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-          onClick={() => setSelectedDetails(null)}
-        >
-          <div
-            className="w-full max-w-md animate-in fade-in zoom-in-95 flex flex-col gap-5 rounded-xl border border-border bg-card p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between border-b border-border/50 pb-4">
-              <div>
-                <h3 className="text-xl font-bold font-mono text-foreground">
-                  {selectedDetails.id === occupiedId
-                    ? containerId
-                    : selectedDetails.containerId}
-                </h3>
-                <p className="text-sm text-muted-foreground font-mono">
-                  Endereço: {selectedDetails.label}
-                </p>
-              </div>
-              <button
-                onClick={() => setSelectedDetails(null)}
-                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
-                <span className="text-xs text-muted-foreground">
-                  Zona de Armazenagem
-                </span>
-                <span className="font-semibold">
-                  {selectedDetails.zone || "N/A"}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
-                <span className="text-xs text-muted-foreground">
-                  Peso Bruto
-                </span>
-                <span className="font-semibold font-mono">
-                  {selectedDetails.peso || "0"}t
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
-                <span className="text-xs text-muted-foreground">
-                  Data de Chegada
-                </span>
-                <span className="font-semibold font-mono">
-                  {selectedDetails.dataChegada || "--"}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
-                <span className="text-xs text-muted-foreground">
-                  Previsão de Saída
-                </span>
-                <span className="font-semibold font-mono">
-                  {selectedDetails.dataSaida || "--"}
-                </span>
-              </div>
-            </div>
-
-            {selectedDetails.isIMO === true && (
-              <div className="flex items-center gap-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-3 text-yellow-500">
-                <AlertTriangle className="size-5" />
-                <span className="text-sm font-semibold">
-                  Carga Perigosa (IMO) Identificada
-                </span>
-              </div>
-            )}
-
-            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/50 p-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <Info className="size-4" />
-                <span>Justificativa / Observações</span>
-              </div>
-              <p className="text-sm leading-relaxed text-foreground/90">
-                {/* Busca pelas propriedades ocultas do parser do CSV ou IA */}
-                {(selectedDetails as any).justificativa ||
-                  (selectedDetails as any).observacao ||
-                  "Nenhuma justificativa ou observação de roteirização registrada para esta alocação."}
+      {/* Painel HUD de Inspeção Flutuante (Disparado pelo Hover) */}
+      {hoveredDetails && (
+        <div className="pointer-events-none fixed bottom-8 right-8 z-[100] flex w-80 animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 rounded-xl border border-border bg-card/95 p-5 shadow-2xl backdrop-blur-md">
+          <div className="flex items-start justify-between border-b border-border/50 pb-3">
+            <div>
+              <h3 className="font-mono text-lg font-bold text-foreground">
+                {hoveredDetails.id === occupiedId
+                  ? containerId
+                  : hoveredDetails.containerId}
+              </h3>
+              <p className="font-mono text-xs text-muted-foreground">
+                Endereço Físico: {hoveredDetails.label}
               </p>
             </div>
+          </div>
 
-            <button
-              onClick={() => setSelectedDetails(null)}
-              className="mt-2 w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none"
-            >
-              Fechar Detalhes
-            </button>
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-2">
+              <span className="text-[10px] uppercase text-muted-foreground">
+                Zona Alvo
+              </span>
+              <span className="font-semibold text-xs">
+                {hoveredDetails.zone || "N/A"}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-2">
+              <span className="text-[10px] uppercase text-muted-foreground">
+                Peso Bruto
+              </span>
+              <span className="font-mono font-semibold text-xs">
+                {hoveredDetails.peso || "0"}t
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-2">
+              <span className="text-[10px] uppercase text-muted-foreground">
+                Chegada
+              </span>
+              <span className="font-mono text-[10px] font-semibold">
+                {hoveredDetails.dataChegada?.substring(0, 10) || "--"}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-2">
+              <span className="text-[10px] uppercase text-muted-foreground">
+                Saída Prevista
+              </span>
+              <span className="font-mono text-[10px] font-semibold">
+                {hoveredDetails.dataSaida?.substring(0, 10) || "--"}
+              </span>
+            </div>
+          </div>
+
+          {hoveredDetails.isIMO === true && (
+            <div className="flex items-center gap-2 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-2 text-yellow-500">
+              <AlertTriangle className="size-4" />
+              <span className="text-xs font-semibold">
+                Carga Perigosa (IMO)
+              </span>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-1.5 rounded-lg border border-border/50 bg-background/50 p-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <Info className="size-3.5" />
+              <span>Justificativa / Observações</span>
+            </div>
+            <p className="text-xs leading-relaxed text-foreground/90">
+              {(hoveredDetails as any).justificativa ||
+                (hoveredDetails as any).observacao ||
+                "Nenhuma justificativa ou observação registrada pelo sistema."}
+            </p>
           </div>
         </div>
       )}
