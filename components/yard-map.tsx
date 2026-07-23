@@ -1,8 +1,16 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import type { Slot } from "@/lib/yard";
 import { ROWS_COUNT, LEVELS_COUNT } from "@/lib/yard";
-import { Crosshair, Layers, AlertTriangle, Package } from "lucide-react";
+import {
+  Crosshair,
+  Layers,
+  AlertTriangle,
+  Package,
+  X,
+  Info,
+} from "lucide-react";
 import type { FilterState } from "@/components/yard-filters";
 
 type YardMapProps = {
@@ -25,6 +33,7 @@ export function YardMap({
   filters,
 }: YardMapProps) {
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
+  const [selectedDetails, setSelectedDetails] = useState<Slot | null>(null);
 
   useEffect(() => {
     if (targetId) {
@@ -100,9 +109,8 @@ export function YardMap({
         </div>
       </header>
 
-      {/* Wrapper de Rolagem Vertical (Exibe ~25 vagas) */}
+      {/* Wrapper de Rolagem Vertical */}
       <div className="max-h-[640px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
-        {/* Grid Fixo com Dimming (Esmaecimento) */}
         <div
           className="grid flex-1 gap-3"
           style={{
@@ -118,7 +126,6 @@ export function YardMap({
               slot.status === "Realocado";
             const isOccupied = isNewlyOccupied || isHistoricallyOccupied;
 
-            // Tratamento estrito do IMO vindo da planilha
             const isHazardous = slot.isIMO === true;
 
             // 1. Processamento Multi-Filtros para o Dimming
@@ -151,7 +158,6 @@ export function YardMap({
                   (filters.status === "Realocado" &&
                     slot.status === "Realocado")));
 
-            // Validação de Período por Intervalo de Dias (YYYY-MM-DD)
             let matchesPeriodo = true;
             const hasPeriodFilter = Boolean(
               filters.dataInicio || filters.dataFim,
@@ -161,15 +167,15 @@ export function YardMap({
               const targetDate = slot.dataChegada;
 
               if (!targetDate || !targetDate.includes("/")) {
-                matchesPeriodo = false; // Vagas vazias ou sem data válida caem fora
+                matchesPeriodo = false;
               } else {
                 const parts = targetDate.trim().split(" ");
-                const [datePart] = parts; // "10/07/2026"
+                const [datePart] = parts;
                 const [day, month, year] = datePart.split("/");
 
-                const slotDateStr = `${year}-${month}-${day}`; // "2026-07-10"
-                const startDateStr = filters.dataInicio || ""; // "2026-07-09"
-                const endDateStr = filters.dataFim || ""; // "2026-07-11"
+                const slotDateStr = `${year}-${month}-${day}`;
+                const startDateStr = filters.dataInicio || "";
+                const endDateStr = filters.dataFim || "";
 
                 const isAfterOrEqualStart =
                   startDateStr === "" || slotDateStr >= startDateStr;
@@ -191,17 +197,18 @@ export function YardMap({
 
             // 2. Cores da Vaga
             let statusClasses =
-              "border-border bg-background/40 hover:border-primary/40";
+              "border-border bg-background/40 hover:border-primary/40 cursor-pointer";
 
             if (isTarget) {
               statusClasses =
-                "animate-target-pulse border-primary bg-primary/5";
+                "animate-target-pulse border-primary bg-primary/5 cursor-pointer";
             }
 
             if (isOccupied) {
-              statusClasses =
+              statusClasses = `${
                 zoneBgColors[slot.zone?.toUpperCase() || "HOT"] ||
-                "border-primary bg-primary/20";
+                "border-primary bg-primary/20"
+              } cursor-pointer`;
             }
 
             // 3. Aplicação do Dimming
@@ -217,6 +224,9 @@ export function YardMap({
                   e.preventDefault();
                   if (!isOccupied && isGrabbed && !isFilteredOut) {
                     onDropSlot(slot.id);
+                  } else if (isOccupied) {
+                    // Ao clicar em uma vaga ocupada, abre o modal
+                    setSelectedDetails(slot);
                   }
                 }}
               >
@@ -240,7 +250,6 @@ export function YardMap({
 
                 {isOccupied ? (
                   <div className="relative z-10 flex h-full w-full flex-col justify-between p-2 text-left">
-                    {/* Cabeçalho: Endereço, Peso e ID */}
                     <div className="mb-1 border-b border-white/10 pb-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-[10px] text-muted-foreground/80">
@@ -255,7 +264,6 @@ export function YardMap({
                       </div>
                     </div>
 
-                    {/* Metadados: Chegada e Saída */}
                     <div className="flex flex-col gap-1">
                       <div className="flex flex-col text-[9px] leading-tight">
                         <span className="text-muted-foreground/70">
@@ -283,6 +291,102 @@ export function YardMap({
           })}
         </div>
       </div>
+
+      {/* Modal de Detalhes do Contêiner */}
+      {selectedDetails && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          onClick={() => setSelectedDetails(null)}
+        >
+          <div
+            className="w-full max-w-md animate-in fade-in zoom-in-95 flex flex-col gap-5 rounded-xl border border-border bg-card p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between border-b border-border/50 pb-4">
+              <div>
+                <h3 className="text-xl font-bold font-mono text-foreground">
+                  {selectedDetails.id === occupiedId
+                    ? containerId
+                    : selectedDetails.containerId}
+                </h3>
+                <p className="text-sm text-muted-foreground font-mono">
+                  Endereço: {selectedDetails.label}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedDetails(null)}
+                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
+                <span className="text-xs text-muted-foreground">
+                  Zona de Armazenagem
+                </span>
+                <span className="font-semibold">
+                  {selectedDetails.zone || "N/A"}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
+                <span className="text-xs text-muted-foreground">
+                  Peso Bruto
+                </span>
+                <span className="font-semibold font-mono">
+                  {selectedDetails.peso || "0"}t
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
+                <span className="text-xs text-muted-foreground">
+                  Data de Chegada
+                </span>
+                <span className="font-semibold font-mono">
+                  {selectedDetails.dataChegada || "--"}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-lg border border-border/50 bg-background/50 p-3">
+                <span className="text-xs text-muted-foreground">
+                  Previsão de Saída
+                </span>
+                <span className="font-semibold font-mono">
+                  {selectedDetails.dataSaida || "--"}
+                </span>
+              </div>
+            </div>
+
+            {selectedDetails.isIMO === true && (
+              <div className="flex items-center gap-3 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-3 text-yellow-500">
+                <AlertTriangle className="size-5" />
+                <span className="text-sm font-semibold">
+                  Carga Perigosa (IMO) Identificada
+                </span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2 rounded-lg border border-border/50 bg-background/50 p-4">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <Info className="size-4" />
+                <span>Justificativa / Observações</span>
+              </div>
+              <p className="text-sm leading-relaxed text-foreground/90">
+                {/* Busca pelas propriedades ocultas do parser do CSV ou IA */}
+                {(selectedDetails as any).justificativa ||
+                  (selectedDetails as any).observacao ||
+                  "Nenhuma justificativa ou observação de roteirização registrada para esta alocação."}
+              </p>
+            </div>
+
+            <button
+              onClick={() => setSelectedDetails(null)}
+              className="mt-2 w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none"
+            >
+              Fechar Detalhes
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
