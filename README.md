@@ -146,24 +146,3 @@ Projeto desenvolvido como parte do desafio técnico da **KODIE Academy** em parc
 ---
 
 ## 👨‍💻 Desenvolvido por
-
-### O que foi atualizado:
-
-1. **Status e Versão**: Subimos para a 2.1.0 e mudamos o status para Estável/Apresentação.
-
-
-2. **Novidades**: Destaquei em *bullet points* as três grandes vitórias técnicas de hoje (Trava Mecânica, Renderização Imune a CSV[cite: 12] e Persistência de Raciocínio).
-
-
-3. **Engenharia de Prompt**: Adicionei menção direta ao arquivo Markdown que criamos (`/docs/AI_PROMPT_ENGINEERING.md`).
-
-
-4. **Microsserviços**: Dividi a explicação do Make.com em dois serviços distintos, exatamente como a sua documentação em PDF exige (Torre de Controle vs. Gravação).
-
-
-5. **Estrutura de Pastas**: Atualizei a árvore de diretórios para refletir todos os componentes modulares novos (como `ghost-container.tsx`, `status-alerts.tsx`[cite: 6], `container-grabber.tsx`[cite: 8], e `yard-filters.tsx`[cite: 5]).
-
-
-6. **Variáveis e React 19**: Atualizei a *stack* indicando o uso das ferramentas de ponta (React 19 e Tailwind 4)[cite: 4] e ajustei as instruções de variável de ambiente considerando a adição da URL de gravação[cite: 1].
-
-Pode rodar aquele trio `git add`, `git commit -m "docs: atualiza README para v2.1.0 e detalha arquitetura de microsserviços"` e dar o `push` final. Bom show na apresentação!
