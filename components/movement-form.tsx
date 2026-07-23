@@ -111,30 +111,6 @@ export function MovementForm({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="zone" className="text-sm font-medium text-foreground">
-            Zona Alvo
-          </label>
-          <div className="relative">
-            <Thermometer
-              className={`pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 ${zoneAccent[data.zone]}`}
-              aria-hidden="true"
-            />
-            <select
-              id="zone"
-              value={data.zone}
-              onChange={(e) => onChange({ zone: e.target.value as Zone })}
-              className="h-11 w-full appearance-none rounded-lg border border-input bg-background pl-9 pr-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/40"
-            >
-              {ZONE_OPTIONS.map((zone) => (
-                <option key={zone} value={zone}>
-                  {zone}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
         {/* Campo IMO (Carga Perigosa) */}
         <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/50 p-3 shadow-sm">
           <input
