@@ -4,7 +4,7 @@
 ![Status](https://img.shields.io/badge/status-Estável_|_Apresentação-0b2c4d?style=for-the-badge)
 
 **🔗 Aplicação Online:** [https://terminal-yms-ws.vercel.app/](https://terminal-yms-ws.vercel.app/)
-
+**📋 Gestão do Projeto (Trello):** [Sprint: Desafio 2 (Finalização)](https://trello.com/invite/b/6a5c3076f779b3520560006f/ATTI59b713750d526175bd7bb976252326c868D1E70D/sprint-desafio-2-finalizacao)
 ---
 
 ## 📌 Visão Geral
