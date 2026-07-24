@@ -1,6 +1,6 @@
 # 🏗️ Argos: Torre de Controle para Armazém Autoportante
 
-![Versão](https://img.shields.io/badge/version-2.1.0-f97316?style=for-the-badge)
+![Versão](https://img.shields.io/badge/version-3.0.0-f97316?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Estável_|_Apresentação-0b2c4d?style=for-the-badge)
 
 **🔗 Aplicação Online:** [https://terminal-yms-ws.vercel.app/](https://terminal-yms-ws.vercel.app/)
@@ -140,29 +140,30 @@ Lembre-se de realizar um *Redeploy* sempre que alterar as chaves de integração
 
 Projeto desenvolvido como parte do desafio técnico da **KODIE Academy** em parceria com a **Wilson Sons**.
 
-* **Versão:** 2.1.0
+* **Versão:** 3.0.0
 * **Status:** Estável (Refatoração estrutural de validação concluída).
 
 ---
 
 ## 👨‍💻 Desenvolvido por
 
-<div>
-  <a href="https://www.linkedin.com/in/eduardogomes377">
-    <img src="https://github.com/Eduardo377.png" width="120px;" alt="Foto de Eduardo Gomes Andrade" style="border-radius: 50%;"/>
-  </a>
-  <br />
-  <strong>Eduardo Andrade</strong>
-  <br />
-  <em>Full Stack Developer</em>
-  <br />
-  <em>Cyber Security</em>
-  <br />
-
-  <a href="https://www.linkedin.com/in/eduardogomes377" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
-  </a>
-  <a href="mailto:eduardogomes377@gmail.com" target="_blank">
-    <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
-  </a>
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://www.linkedin.com/in/eduardogomes377">
+        <img src="https://github.com/Eduardo377.png" width="110px;" alt="Foto de Eduardo Gomes Andrade" style="border-radius: 50%;"/>
+      </a>
+    </td>
+    <td>
+      <strong>Eduardo Andrade</strong><br />
+      <em>Full Stack Developer </em><br />
+      <em>Cyber Security </em><br />
+      <a href="https://www.linkedin.com/in/eduardogomes377" target="_blank">
+        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/>
+      </a>
+      <a href="mailto:eduardogomes377@gmail.com" target="_blank">
+        <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
+      </a>
+    </td>
+  </tr>
+</table>
