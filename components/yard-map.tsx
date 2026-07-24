@@ -79,7 +79,6 @@ export function YardMap({
           )}
         </div>
 
-        {/* Navegação por Andares */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
           {Array.from({ length: totalLevels }).map((_, i) => {
             const level = i + 1;
@@ -102,7 +101,6 @@ export function YardMap({
         </div>
       </header>
 
-      {/* Wrapper de Rolagem Vertical */}
       <div className="max-h-[640px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
         <div
           className="grid flex-1 gap-3"
@@ -121,7 +119,6 @@ export function YardMap({
 
             const isHazardous = slot.isIMO === true;
 
-            // 1. Processamento Multi-Filtros
             const matchesSearch =
               filters.searchId === "" ||
               slot.containerId
@@ -188,7 +185,6 @@ export function YardMap({
               matchesPeriodo
             );
 
-            // 2. Cores da Vaga
             let statusClasses =
               "border-border bg-background/40 hover:border-primary/40 cursor-default";
 
@@ -204,7 +200,6 @@ export function YardMap({
               } cursor-help`;
             }
 
-            // 3. Aplicação do Dimming
             const opacityClass = isFilteredOut
               ? "opacity-15 grayscale transition-opacity duration-300 pointer-events-none"
               : "opacity-100 transition-opacity duration-300";
@@ -226,7 +221,6 @@ export function YardMap({
                   }
                 }}
               >
-                {/* Marca d'água de Contêiner (Cubo) no centro */}
                 {isOccupied && (
                   <Package
                     className="pointer-events-none absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 text-white/10"
@@ -235,7 +229,6 @@ export function YardMap({
                   />
                 )}
 
-                {/* Marca d'água de Carga Perigosa (IMO) no canto inferior direito */}
                 {isOccupied && isHazardous && (
                   <AlertTriangle
                     className="pointer-events-none absolute bottom-1 right-2 size-8 text-yellow-500/25"
@@ -288,7 +281,6 @@ export function YardMap({
         </div>
       </div>
 
-      {/* Painel HUD de Inspeção Flutuante (Disparado pelo Hover) */}
       {hoveredDetails && (
         <div className="pointer-events-none fixed bottom-8 right-8 z-[100] flex w-80 animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 rounded-xl border border-border bg-card/95 p-5 shadow-2xl backdrop-blur-md">
           <div className="flex items-start justify-between border-b border-border/50 pb-3">

@@ -122,7 +122,6 @@ export function YardFilters({ filters, onChange }: YardFiltersProps) {
           </select>
         </div>
 
-        {/* Data Início do Período */}
         <div className="relative">
           <Calendar
             className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -137,7 +136,6 @@ export function YardFilters({ filters, onChange }: YardFiltersProps) {
           />
         </div>
 
-        {/* Data Fim do Período */}
         <div className="relative">
           <Calendar
             className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"

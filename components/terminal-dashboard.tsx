@@ -29,10 +29,8 @@ export function TerminalDashboard() {
   const [result, setResult] = useState<Result>(null);
   const [allocationError, setAllocationError] = useState<string | null>(null);
 
-  // NOVO ESTADO: Guardar a justificativa da IA para usar na gravação
   const [aiJustification, setAiJustification] = useState<string | null>(null);
 
-  // Estados do Guindaste (Sticky Drag)
   const [isGrabbed, setIsGrabbed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -57,7 +55,6 @@ export function TerminalDashboard() {
     setData((prev) => ({ ...prev, ...patch }));
   }
 
-  // Efeito para rastrear o mouse APENAS quando a caixa for "fisgada"
   useEffect(() => {
     if (!isGrabbed) return;
 
@@ -85,14 +82,12 @@ export function TerminalDashboard() {
             const status = cols[1];
             const idContainer = cols[2];
 
-            // Correção do split para pesos com vírgula (ex: "24,5" cortado em "24" e "5")
             let peso = cols[3];
             let offset = 0;
 
-            // Se a próxima coluna for um número pequeno sem barra de data, o peso foi dividido
             if (cols[4] && !cols[4].includes("/")) {
               peso = `${cols[3]},${cols[4]}`;
-              offset = 1; // Empurra a leitura das datas uma casa pra frente
+              offset = 1;
             }
 
             const dataHora = cols[4 + offset];
@@ -142,7 +137,7 @@ export function TerminalDashboard() {
     setTargetId(null);
     setContainerReady(false);
     setIsGrabbed(false);
-    setAiJustification(null); // Reseta a justificativa a cada nova consulta
+    setAiJustification(null);
 
     try {
       const payload = {
@@ -195,7 +190,6 @@ export function TerminalDashboard() {
 
       if (chosen) {
         setTargetId(chosen.id);
-        // SALVA a justificativa no estado para usar depois na gravação
         setAiJustification(
           responseData.justificativa ||
             "Alocação sugerida sem justificativa adicional.",
@@ -247,7 +241,7 @@ export function TerminalDashboard() {
         data_hora_chegada: new Date().toLocaleString("pt-BR"),
         data_saida_prevista: data.departure,
         IMO: data.isIMO,
-        zona: realZone, // <-- CORRIGIDO AQUI: Usa a zona real da vaga e não do form
+        zona: realZone,
         status: "Ocupado",
         justificativa:
           aiJustification || "Alocação manual (Fora do alvo da IA)",

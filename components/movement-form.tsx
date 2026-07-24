@@ -110,7 +110,6 @@ export function MovementForm({
           </div>
         </div>
 
-        {/* Campo IMO (Carga Perigosa) */}
         <div className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/50 p-3 shadow-sm">
           <input
             type="checkbox"

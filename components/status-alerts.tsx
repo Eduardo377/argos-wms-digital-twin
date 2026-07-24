@@ -17,7 +17,6 @@ export function StatusAlerts({
 }: StatusAlertsProps) {
   return (
     <>
-      {/* Exibição de Resultado */}
       {result && (
         <div
           className={[
@@ -60,7 +59,6 @@ export function StatusAlerts({
         </div>
       )}
 
-      {/* Exibição da Justificativa de Erro da IA */}
       {allocationError && (
         <div className="rounded-lg border border-red-500/50 bg-red-500/5 p-4 text-red-200">
           <h3 className="flex items-center gap-2 font-bold">

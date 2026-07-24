@@ -14,10 +14,8 @@ type DashboardMetricsProps = {
 };
 
 export function DashboardMetrics({ slots }: DashboardMetricsProps) {
-  // Se os slots ainda não carregaram, renderiza um skeleton ou retorna null
   if (!slots.length) return null;
 
-  // 1. Total de Contêineres (Filtra ocupados)
   const occupiedSlots = slots.filter(
     (slot) =>
       slot.status === "Ocupado" ||
@@ -26,14 +24,10 @@ export function DashboardMetrics({ slots }: DashboardMetricsProps) {
   );
   const totalContainers = occupiedSlots.length;
 
-  // 2. Taxa de Ocupação
   const occupancyRate = ((totalContainers / slots.length) * 100).toFixed(2);
 
-  // 3. Quantidade de IMO
   const totalIMO = occupiedSlots.filter((slot) => slot.isIMO).length;
 
-  // 4. Status de Conformidade (Regra: IMO obrigatoriamente na Coluna E)
-  // Verifica se existe algum contêiner IMO onde o ID da vaga NÃO contém "E"
   const hasImoViolation = occupiedSlots.some(
     (slot) => slot.isIMO && !slot.id.includes("E"),
   );
@@ -44,7 +38,6 @@ export function DashboardMetrics({ slots }: DashboardMetricsProps) {
       aria-label="Métricas do Pátio"
       className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4"
     >
-      {/* Total de Contêineres */}
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card/60 p-5 shadow-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Package className="size-4 text-sky-400" />
@@ -57,7 +50,6 @@ export function DashboardMetrics({ slots }: DashboardMetricsProps) {
         </span>
       </div>
 
-      {/* Taxa de Ocupação */}
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card/60 p-5 shadow-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Activity className="size-4 text-primary" />
@@ -70,7 +62,6 @@ export function DashboardMetrics({ slots }: DashboardMetricsProps) {
         </span>
       </div>
 
-      {/* Quantidade de IMO */}
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card/60 p-5 shadow-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <AlertTriangle className="size-4 text-yellow-500" />
@@ -83,7 +74,6 @@ export function DashboardMetrics({ slots }: DashboardMetricsProps) {
         </span>
       </div>
 
-      {/* Status de Conformidade */}
       <div
         className={`flex flex-col gap-2 rounded-xl border p-5 shadow-sm transition-colors ${
           isConforme
