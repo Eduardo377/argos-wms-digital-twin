@@ -57,3 +57,5 @@ Use EXATAMENTE estas chaves no JSON:
   "IMO" : {{if(2.IMO; "TRUE"; "FALSE")}},
 "Justificativa" : "Explicação técnica detalhada da posição e da zona escolhida baseada nas regras de negócio"
 }
+
+Não faça nada além disso, pare após enviar O .json.
