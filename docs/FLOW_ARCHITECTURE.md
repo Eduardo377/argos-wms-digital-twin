@@ -16,10 +16,10 @@ Responsável por ler o estado atual da matriz 3D do pátio e acionar a Inteligê
 Responsável por efetivar a persistência dos dados no Gêmeo Digital (Google Sheets) de forma assíncrona, ativado pelo evento de "Drag and Drop" do usuário.
 
 1. **Webhook (Entrada):** Recebe o ID da vaga final validada e escolhida pelo usuário na interface.
-2. **Google Sheets (Busca):** Localiza a coordenada exata da vaga no banco de dados oficial.
-3. **Router (Fluxo de Decisão If-Else):**
-   - *Caminho 1 (Update Row):* Atualiza os dados da célula específica com as informações do contêiner, alterando o status para 'Ocupado'.
-   - *Caminho 2 (Add Row):* Executa rotinas de log adicionais, caso a regra de negócio exija a criação de um novo registro histórico.
+2. **Google Sheets (Busca e Sanitização):** Localiza a coordenada exata da vaga no banco de dados oficial. A busca aplica funções de sanitização (`upper()`) nos parâmetros de entrada (`vaga_confirmada` e `zona`) para garantir consistência e evitar falhas operacionais causadas por divergências de formatação (letras maiúsculas ou minúsculas) oriundas do frontend.
+3. **Router (Fluxo de Decisão If-Else e Trava de Segurança):** Atua como o mecanismo de segurança central do Gêmeo Digital, possuindo duas ramificações de estado:
+   - *Caminho 1 (Update Row - Validação de Sucesso):* Executado apenas mediante duas validações estritas: a existência do `Row number` (assegurando que o sistema não interaja com vagas fantasmas ou não mapeadas) e a confirmação de que o status atual é igual a `Livre` (impedindo colisões físicas e sobreposições lógicas de contêineres). Confirmadas as regras, atualiza os dados da célula para 'Ocupado'.
+   - *Caminho 2 (Add Row - Fallback e Auditoria):* Estruturado estruturado para atuar como um *fallback* de segurança. Caso a vaga desejada já esteja ocupada ou inválida, o fluxo é desviado (`else`) para registrar a anomalia operacional diretamente na planilha de alertas (SecOps).
 4. **Webhook Response:** Confirma o sucesso da gravação de volta para a aplicação.
 
 ![Fluxo de Automação](./fluxo_make_automacao.png)
