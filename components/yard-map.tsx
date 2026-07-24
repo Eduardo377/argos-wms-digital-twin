@@ -346,8 +346,8 @@ export function YardMap({
               <span>Justificativa / Observações</span>
             </div>
             <p className="text-xs leading-relaxed text-foreground/90">
-              {(hoveredDetails as any).justificativa ||
-                (hoveredDetails as any).observacao ||
+              {hoveredDetails.justificativa ||
+                hoveredDetails.observacao ||
                 "Nenhuma justificativa ou observação registrada pelo sistema."}
             </p>
           </div>

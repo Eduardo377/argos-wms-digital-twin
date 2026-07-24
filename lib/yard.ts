@@ -10,6 +10,8 @@ export type Slot = {
   peso?: string;
   dataSaida?: string;
   dataChegada?: string;
+  justificativa?: string;
+  observacao?: string;
 };
 
 export type MovementData = {
