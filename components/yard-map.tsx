@@ -249,24 +249,38 @@ export function YardMap({
                         </span>
                       </div>
                       <div className="mt-0.5 w-full truncate font-mono text-[13px] font-bold text-white">
-                        {isNewlyOccupied ? containerId : slot.containerId}
+                        <div className="mt-0.5 flex w-full items-center justify-between gap-1">
+                          <div className="truncate font-mono text-[13px] font-bold text-white">
+                            {isNewlyOccupied ? containerId : slot.containerId}
+                          </div>
+                          {(slot.justificativa || slot.observacao) && (
+                            <Info
+                              className="size-4 shrink-0 text-primary/80 drop-shadow-md"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                      <div className="flex flex-col text-[9px] leading-tight">
-                        <span className="text-muted-foreground/70">
-                          Chegada:
-                        </span>
-                        <span className="truncate font-mono text-foreground">
-                          {slot.dataChegada?.substring(0, 30) || "--"}
-                        </span>
-                      </div>
-                      <div className="flex flex-col text-[9px] leading-tight">
-                        <span className="text-muted-foreground/70">Saída:</span>
-                        <span className="truncate font-mono text-foreground">
-                          {slot.dataSaida?.substring(0, 30) || "--"}
-                        </span>
+                    <div className="mt-auto flex items-end justify-between">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex flex-col text-[9px] leading-tight">
+                          <span className="text-muted-foreground/70">
+                            Chegada:
+                          </span>
+                          <span className="truncate font-mono text-foreground">
+                            {slot.dataChegada?.substring(0, 30) || "--"}
+                          </span>
+                        </div>
+                        <div className="flex flex-col text-[9px] leading-tight">
+                          <span className="text-muted-foreground/70">
+                            Saída:
+                          </span>
+                          <span className="truncate font-mono text-foreground">
+                            {slot.dataSaida?.substring(0, 30) || "--"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
