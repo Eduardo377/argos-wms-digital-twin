@@ -1,10 +1,33 @@
 # 🏗️ Argos: Torre de Controle para Armazém Autoportante
 
-![Versão](https://img.shields.io/badge/version-3.0.0-f97316?style=for-the-badge)
-![Status](https://img.shields.io/badge/status-Estável_|_Apresentação-0b2c4d?style=for-the-badge)
+![Build Status](https://img.shields.io/badge/Build-v3.0.0-emerald)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![Integração](https://img.shields.io/badge/Integração-Make.com-purple)
+![IA](https://img.shields.io/badge/IA-Google_Gemini_Flash-blue)
 
 **🔗 Aplicação Online:** [https://terminal-yms-ws.vercel.app/](https://terminal-yms-ws.vercel.app/)
 **📋 Gestão do Projeto (Trello):** [Sprint: Desafio 2 (Finalização)](https://trello.com/invite/b/6a5c3076f779b3520560006f/ATTI59b713750d526175bd7bb976252326c868D1E70D/sprint-desafio-2-finalizacao)
+
+O **Argos WMS** é um sistema de roteirização logística e gestão de pátios (Terminal Operating System/YMS) construído com o conceito de **Gêmeo Digital**. Ele utiliza inteligência artificial para tomar decisões autônomas de alocação de contêineres em uma matriz autoportante 3D, respeitando regras rígidas de física, peso e cargas perigosas (IMO).
+
+## 🧠 Arquitetura e Inteligência Artificial
+
+A inteligência do sistema opera fora do frontend, gerenciada por uma arquitetura de microsserviços *serverless* via Make.com e Google Sheets (atuando como banco de dados em tempo real).
+
+Para entender a fundo como o motor de decisão funciona, consulte a documentação técnica oficial:
+
+* [Documentação da Arquitetura de Backend (Make.com)](./docs/FLOW_ARCHITECTURE.md)
+* [Engenharia do Prompt do Cérebro IA (Regras de Negócio)](./docs/AI_PROMPT_ENGINEERING.md)
+* 
+---
+
+## 🚀 Funcionalidades (HUD do Terminal)
+
+- **Torre de Controle IA:** Formulário de requisição que consulta a IA para encontrar a vaga perfeita (com menor risco e maior otimização de espaço).
+- **Matriz Autoportante (Pátio):** Visualização 3D (por níveis) com renderização de status, cargas perigosas e detalhamento via *hover*.
+- **Drag and Drop Assíncrono:** Movimentação mecânica simulada. Ao soltar o contêiner no slot alvo, a API grava a persistência no banco e atualiza o Gêmeo Digital.
+- **Filtros e KPIs SecOps:** Sistema completo de filtragem multinível (Data, IMO, Zona, Status) e painel de métricas operacionais em tempo real.
+
 ---
 
 ## 📌 Visão Geral
@@ -76,6 +99,18 @@ graph TD
 
 ---
 
+## ⚙️ Variáveis de Ambiente (Setup Local)
+
+Para rodar o frontend localmente, crie um arquivo `.env.local` na raiz do projeto contendo as seguintes chaves (substitua pelas suas URLs de webhook de produção):
+
+```env
+NEXT_PUBLIC_WEBHOOK_URL="https://hook.us2.make.com/sua-chave-torre-de-controle"
+NEXT_PUBLIC_WEBHOOK_GRAVACAO_URL="https://hook.us2.make.com/sua-chave-gravacao"
+NEXT_PUBLIC_MAPA_PATIO_CSV_URL=""https://docs.google.com/spreadsheets/d/e/sua-chave-csv/pub?gid=0&single=true&output=csv"
+
+```
+
+
 ## 🛠️ Tecnologias Utilizadas
 
 * **Frontend:** React 19, Next.js 16, TypeScript, Tailwind CSS v4, Shadcn/UI, Lucide React.
@@ -98,7 +133,7 @@ graph TD
 1. **Clone o repositório:**
 
 ```bash
-git clone [https://github.com/Eduardo377/argos-wms-digital-twin.git](https://github.com/Eduardo377/argos-wms-digital-twin.git)
+git clone https://github.com/Eduardo377/argos-wms-digital-twin.git
 
 ```
 
