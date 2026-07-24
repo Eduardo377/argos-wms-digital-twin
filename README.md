@@ -32,8 +32,8 @@ A IA processa o estado atual do armazém aplicando restrições críticas basead
 
 O backend opera através de uma arquitetura baseada em automações de baixo código, dividida em dois fluxos distintos para separar responsabilidades:
 
-1. **Microsserviço: Torre de Controle (Cérebro IA):** Lê o estado da matriz 3D via Google Sheets, cruza os dados do contêiner com as 8 regras logísticas usando o **Google Gemini 1.5 Flash**, e devolve um payload JSON com o `targetSlot` ideal e sua justificativa.
-2. **Microsserviço: Gravação de Movimentação (Braço Mecânico):** Ativado de forma assíncrona após o evento de *Drag and Drop* validado no front-end. Ele atualiza o banco de dados oficial e executa o log histórico de movimentação.
+1. **Microsserviço: Torre de Controle (Cérebro IA) — 🔗 [Ver Cenário Público](https://us2.make.com/public/shared-scenario/cUCfHtqMMMH/argos-torre-de-controle-para-armazem-au):** Lê o estado da matriz 3D via Google Sheets, cruza os dados do contêiner com as 8 regras logísticas usando o **Google Gemini 1.5 Flash**, e devolve um payload JSON com o `targetSlot` ideal e sua justificativa.
+2. **Microsserviço: Gravação de Movimentação (Braço Mecânico) — 🔗 [Ver Cenário Público](https://us2.make.com/public/shared-scenario/Q4rX8oF5vDj/argos-gravacao-de-movimentacao-no-patio):** Ativado de forma assíncrona após o evento de *Drag and Drop* validado no front-end. Ele atualiza o banco de dados oficial e executa o log histórico de movimentação.
 
 ```mermaid
 graph TD
