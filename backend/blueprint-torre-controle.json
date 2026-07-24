@@ -6,7 +6,7 @@
             "module": "gateway:CustomWebHook",
             "version": 1,
             "parameters": {
-                "hook": 3410460,
+                "hook": 2611286,
                 "maxResults": 1
             },
             "mapper": {},
@@ -45,13 +45,13 @@
             "module": "google-sheets:filterRows",
             "version": 2,
             "parameters": {
-                "__IMTCONN__": 9097411
+                "__IMTCONN__": 10070328
             },
             "mapper": {
                 "from": "share",
                 "sheetId": "Página1",
                 "sortOrder": "asc",
-                "spreadsheetId": "1AX2MlVtQSQ5DABW5gezOgcOfvnoHHeGct6dRMt-SFYo",
+                "spreadsheetId": "1U7XKUnhVTH7QAv05xaEH1Lo6N6ifhl2qLzYZKJRzIU0",
                 "tableFirstRow": "A1:Z1",
                 "includesHeaders": true,
                 "valueRenderOption": "FORMATTED_VALUE",
@@ -68,7 +68,8 @@
                             "label": "Select from all"
                         },
                         "orderBy": {
-                            "mode": "chose"
+                            "mode": "chose",
+                            "label": "Empty"
                         },
                         "sheetId": {
                             "mode": "chose",
@@ -100,7 +101,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "My Google connection (edutest377@gmail.com)"
+                            "label": "My Google connection"
                         }
                     }
                 },
@@ -251,132 +252,132 @@
                     {
                         "name": "0",
                         "type": "text",
-                        "label": "Posicao_ID (A)"
+                        "label": "A"
                     },
                     {
                         "name": "1",
                         "type": "text",
-                        "label": "Status (B)"
+                        "label": "B"
                     },
                     {
                         "name": "2",
                         "type": "text",
-                        "label": "ID_Container (C)"
+                        "label": "C"
                     },
                     {
                         "name": "3",
                         "type": "text",
-                        "label": "Peso_ton (D)"
+                        "label": "D"
                     },
                     {
                         "name": "4",
                         "type": "text",
-                        "label": "Data_Hora (E)"
+                        "label": "E"
                     },
                     {
                         "name": "5",
                         "type": "text",
-                        "label": "Saida_hora_Prevista (F)"
+                        "label": "F"
                     },
                     {
                         "name": "6",
                         "type": "text",
-                        "label": "Zona (G)"
+                        "label": "G"
                     },
                     {
                         "name": "7",
                         "type": "text",
-                        "label": "IMO (H)"
+                        "label": "H"
                     },
                     {
                         "name": "8",
                         "type": "text",
-                        "label": "(I)"
+                        "label": "I"
                     },
                     {
                         "name": "9",
                         "type": "text",
-                        "label": "(J)"
+                        "label": "J"
                     },
                     {
                         "name": "10",
                         "type": "text",
-                        "label": "(K)"
+                        "label": "K"
                     },
                     {
                         "name": "11",
                         "type": "text",
-                        "label": "(L)"
+                        "label": "L"
                     },
                     {
                         "name": "12",
                         "type": "text",
-                        "label": "(M)"
+                        "label": "M"
                     },
                     {
                         "name": "13",
                         "type": "text",
-                        "label": "(N)"
+                        "label": "N"
                     },
                     {
                         "name": "14",
                         "type": "text",
-                        "label": "(O)"
+                        "label": "O"
                     },
                     {
                         "name": "15",
                         "type": "text",
-                        "label": "(P)"
+                        "label": "P"
                     },
                     {
                         "name": "16",
                         "type": "text",
-                        "label": "(Q)"
+                        "label": "Q"
                     },
                     {
                         "name": "17",
                         "type": "text",
-                        "label": "(R)"
+                        "label": "R"
                     },
                     {
                         "name": "18",
                         "type": "text",
-                        "label": "(S)"
+                        "label": "S"
                     },
                     {
                         "name": "19",
                         "type": "text",
-                        "label": "(T)"
+                        "label": "T"
                     },
                     {
                         "name": "20",
                         "type": "text",
-                        "label": "(U)"
+                        "label": "U"
                     },
                     {
                         "name": "21",
                         "type": "text",
-                        "label": "(V)"
+                        "label": "V"
                     },
                     {
                         "name": "22",
                         "type": "text",
-                        "label": "(W)"
+                        "label": "W"
                     },
                     {
                         "name": "23",
                         "type": "text",
-                        "label": "(X)"
+                        "label": "X"
                     },
                     {
                         "name": "24",
                         "type": "text",
-                        "label": "(Y)"
+                        "label": "Y"
                     },
                     {
                         "name": "25",
                         "type": "text",
-                        "label": "(Z)"
+                        "label": "Z"
                     }
                 ]
             }
@@ -437,13 +438,13 @@
             "module": "google-sheets:filterRows",
             "version": 2,
             "parameters": {
-                "__IMTCONN__": 9097417
+                "__IMTCONN__": 10070392
             },
             "mapper": {
-                "from": "share",
+                "from": "drive",
                 "sheetId": "Página1",
                 "sortOrder": "asc",
-                "spreadsheetId": "1AX2MlVtQSQ5DABW5gezOgcOfvnoHHeGct6dRMt-SFYo",
+                "spreadsheetId": "1U7XKUnhVTH7QAv05xaEH1Lo6N6ifhl2qLzYZKJRzIU0",
                 "tableFirstRow": "A1:Z1",
                 "includesHeaders": true,
                 "valueRenderOption": "FORMATTED_VALUE",
@@ -457,18 +458,18 @@
                 "restore": {
                     "expect": {
                         "from": {
-                            "label": "Select from all"
+                            "label": "Select from My Drive"
                         },
                         "orderBy": {
-                            "mode": "chose"
-                        },
-                        "sheetId": {
                             "mode": "chose",
-                            "label": "Página1"
+                            "label": "Empty"
                         },
                         "sortOrder": {
                             "mode": "chose",
                             "label": "Ascending"
+                        },
+                        "spreadsheetId": {
+                            "mode": "edit"
                         },
                         "tableFirstRow": {
                             "label": "A-Z"
@@ -492,7 +493,7 @@
                                 "scoped": "true",
                                 "connection": "google"
                             },
-                            "label": "My Google connection (edutest377@gmail.com)"
+                            "label": "My Google connection (eduardogomes377@gmail.com)"
                         }
                     }
                 },
@@ -547,13 +548,13 @@
                     },
                     {
                         "name": "spreadsheetId",
-                        "type": "text",
-                        "label": "Spreadsheet ID",
+                        "type": "select",
+                        "label": "Spreadsheet Name",
                         "required": true
                     },
                     {
                         "name": "sheetId",
-                        "type": "select",
+                        "type": "any",
                         "label": "Sheet Name",
                         "required": true
                     },
@@ -683,7 +684,7 @@
                     {
                         "name": "8",
                         "type": "text",
-                        "label": "(I)"
+                        "label": "Justificativa (I)"
                     },
                     {
                         "name": "9",
@@ -778,10 +779,10 @@
             "module": "gemini-ai:createACompletionGeminiPro",
             "version": 1,
             "parameters": {
-                "__IMTCONN__": 9097435
+                "__IMTCONN__": 10070413
             },
             "mapper": {
-                "model": "gemini-robotics-er-1.5-preview",
+                "model": "gemini-3.5-flash-lite",
                 "contents": [
                     {
                         "role": "user",
@@ -800,7 +801,7 @@
                 "system_instruction": {
                     "parts": [
                         {
-                            "text": "Você é o roteirizador lógico de um terminal de contêineres. Sua função é receber um contêiner novo e alocá-lo na melhor vaga e zona disponível, respeitando estritamente as regras abaixo.\n\nEsse é a planilha que mapeia o pátio: {{5.text}}\n\nDADOS DO NOVO CONTÊINER:\n\nID_Conteiner: {{2.id_conteiner}}\nPeso_ton: {{2.peso_ton}}\nDados_Saida_Prevista: {{2.data_saida_prevista}}\nIMO: {{if(2.IMO; \"Sim\"; \"Nao\")}}\n\nREGRAS DE NEGÓCIO (HIERÁRQUIA RÍGIDA):\n\n1. ISOLAMENTO IMO: Se \"IMO\" for \"Sim\", aloque EXCLUSIVAMENTE na RUA 5 (colunas E). Proibido confundir com cargas normais.\n\n2. OFERTA < 40%: Se oferta total < 40%, aloque apenas nos níveis N1, N2, N3 e N4.\n\n3. GRAVIDADE: Proibido deixar contêineres flutuando. Nível N(x) só pode ser ocupado se N(x-1) estiver ocupado.\n\n4. PESO E ESTABILIDADE: Contêineres > 25t obrigatório no N1. Empilhamento deve ser decrescente: o mais pesado sempre abaixo do mais leve.\n\n5. RETRABALHO: Nunca posicione conteúdo com Data_Saida_Prevista e hora POSTERIOR sobre um conteúdo com data_saida ANTERIOR.\n\n6. OTIMIZAÇÃO: Priorize a proximidade com a zona de transporte.\n\n7. ZONA: Escolha entre as zonas \"Hot\", \"Warm\", \"Cold\" ´e \"Frozen\" de acordo com as regras anteriores.\n\n8. FORMATO OBRIGATÓRIO: Você DEVE devolver a vaga escolhida combinando a Zona, a Coordenada (A1 a E5) e o Andar (N1 a N7), separados por hífen.\nExemplos corretos: FROZEN-A1-N1, HOT-C3-N4, WARM-E5-N7.\n\nFORMATO DE SAÍDA:\nRetorne ESTRITAMENTE um objeto JSON puro. É ABSOLUTAMENTE PROIBIDO usar marcações markdown como crases (```json), blocos de código ou qualquer texto antes ou depois do JSON. O primeiro caractere da sua resposta DEVE ser { e o último DEVE ser }.\n\nUse EXATAMENTE estas chaves no JSON:\n{\n \"targetSlot\": \"O Posicao_ID exato exato copiado da planilha (ex: HOT-A1-N1)\",\n \"justificativa\" : \"Explicação técnica detalhada da posição e da zona escolhida\",\n \"Status\" : \"Escolha entre um desses segundo as regras acima Alocado, Realocado, Ocupado, Vazio, Livre\",\n \"ID_Conteiner\": \"{{2.id_conteiner}}\",\n \"Peso_ton\" : {{2.peso_ton}},\n \"Data_Hora_Chegada\" : \"{{formatDate(now; \"YYYY-MM-DD HH:mm:ss\"; \"America/Sao_Paulo\")}}\",\n \"Data_Saida_Prevista\" : \"{{2.data_saida_prevista}}\",\n \"Zona\" : \"Zona determinada pela IA entre Hot, Warm, Cold ou Frozen\",\n  \"IMO\" : {{if(2.IMO; \"TRUE\"; \"FALSE\")}}\n}"
+                            "text": "Você é o roteirizador lógico de um terminal de contêineres. Sua função é receber um contêiner novo e alocá-lo na melhor vaga e zona disponível, respeitando estritamente as regras abaixo.\n\nEsse é a planilha que mapeia o pátio: {{5.text}}\n\nDADOS DO NOVO CONTÊINER:\n\nID_Conteiner: {{upper(2.id_conteiner)}}\nPeso_ton: {{2.peso_ton}}\nDados_Saida_Prevista: {{2.data_saida_prevista}}\nIMO: {{if(upper(2.IMO); \"Sim\"; \"Nao\")}}\n\nREGRAS DE NEGÓCIO (HIERÁRQUIA RÍGIDA):\n\n1. ISOLAMENTO IMO: Se \"IMO\" for \"Sim\", aloque EXCLUSIVAMENTE na RUA 5 (colunas E). Proibido confundir com cargas normais.\n\n2. OFERTA < 40%: Se oferta total < 40%, aloque apenas nos níveis N1, N2, N3 e N4.\n\n3. GRAVIDADE: Proibido deixar contêineres flutuando. Nível N(x) só pode ser ocupado se N(x-1) estiver ocupado.\n\n4. PESO E ESTABILIDADE: Contêineres > 25t obrigatório no N1. Empilhamento deve ser decrescente: o mais pesado sempre abaixo do mais leve.\n\n5. RETRABALHO: Nunca posicione conteúdo com Data_Saida_Prevista e hora POSTERIOR sobre um conteúdo com data_saida ANTERIOR.\n\n6. OTIMIZAÇÃO: Priorize a proximidade com a zona de transporte.\n\n7. ZONA: Escolha entre as zonas \"Hot\", \"Warm\", \"Cold\" ´e \"Frozen\" de acordo com as regras anteriores.\n\n8. FORMATO OBRIGATÓRIO: Você DEVE devolver a vaga escolhida combinando a Zona, a Coordenada (A1 a E5) e o Andar (N1 a N7), separados por hífen.\nExemplos corretos: FROZEN-A1-N1, HOT-C3-N4, WARM-E5-N7.\n\nFORMATO DE SAÍDA:\nRetorne ESTRITAMENTE um objeto JSON puro. É ABSOLUTAMENTE PROIBIDO usar marcações markdown como crases (```json), blocos de código ou qualquer texto antes ou depois do JSON. O primeiro caractere da sua resposta DEVE ser { e o último DEVE ser }.\n\nUse EXATAMENTE estas chaves no JSON:\n{\n \"targetSlot\": \"O Posicao_ID exato exato copiado da planilha (ex: HOT-A1-N1)\",\n \"justificativa\" : \"Explicação técnica detalhada da posição e da zona escolhida\",\n \"Status\" : \"Escolha entre um desses segundo as regras acima Alocado, Realocado, Ocupado, Vazio, Livre\",\n \"ID_Conteiner\": \"{{upper(2.id_conteiner)}}\",\n \"Peso_ton\" : {{2.peso_ton}},\n \"Data_Hora_Chegada\" : \"{{formatDate(now; \"YYYY-MM-DD HH:mm:ss\"; \"America/Sao_Paulo\")}}\",\n \"Data_Saida_Prevista\" : \"{{2.data_saida_prevista}}\",\n \"Zona\" : \"{{upper(\"Zona determinada pela IA entre Hot, Warm, Cold ou Frozen\")}}\",\n  \"IMO\" : {{if(upper(2.IMO); \"TRUE\"; \"FALSE\")}},\n\"Justificativa\" : \"Explicação técnica detalhada da posição e da zona escolhida baseada nas regras de negócio\"\n}\n\nNão faça nada al´em disso. Pare logo apos enviar o .json"
                         }
                     ]
                 }
@@ -814,7 +815,7 @@
                     "expect": {
                         "model": {
                             "mode": "chose",
-                            "label": "Gemini Robotics-ER 1.5 PreviewDiscontinuation date: April 30, 2026"
+                            "label": "Gemini 3.5 Flash Lite"
                         },
                         "contents": {
                             "mode": "chose",
@@ -1418,7 +1419,7 @@
         "designer": {
             "orphans": []
         },
-        "zone": "eu1.make.com",
+        "zone": "us2.make.com",
         "notes": []
     }
 }

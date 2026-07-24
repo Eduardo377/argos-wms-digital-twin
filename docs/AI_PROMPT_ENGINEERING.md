@@ -1,6 +1,6 @@
 # 🧠 Cérebro IA - Roteirizador Lógico de Pátio
 
-**Versão:** 2.1.0
+**Versão:** 3.0.0
 **Integração:** Make.com -> Google Gemini (Flash)
 **Objetivo:** Tomada de decisão autônoma para alocação de contêineres na matriz autoportante, respeitando gravidade, peso e cargas perigosas (IMO).
 
@@ -32,7 +32,7 @@ REGRAS DE NEGÓCIO (HIERÁRQUIA RÍGIDA):
 
 4. PESO E ESTABILIDADE: Contêineres > 25t obrigatório no N1. Empilhamento deve ser decrescente: o mais pesado sempre abaixo do mais leve.
 
-5. RETRABALHO: Nunca posicione conteúdo com Data_Saida_Prevista e hora POSTERIOR sobre um conteúdo com data_saida ANTERIOR.
+5. RETRABALHO: Nunca posicione conteúdo com Data_Saida_Prevista e hora POSTERIOR sobre um conteúdo com data saída ANTERIOR.
 
 6. OTIMIZAÇÃO: Priorize a proximidade com a zona de transporte.
 
@@ -49,12 +49,12 @@ Use EXATAMENTE estas chaves no JSON:
  "targetSlot": "O Posicao_ID exato exato copiado da planilha (ex: HOT-A1-N1)",
  "justificativa" : "Explicação técnica detalhada da posição e da zona escolhida",
  "Status" : "Escolha entre um desses segundo as regras acima Alocado, Realocado, Ocupado, Vazio, Livre",
- "ID_Conteiner": "{{2.id_conteiner}}",
+ "ID_Conteiner": "{{upper(2.id_conteiner)}}",
  "Peso_ton" : {{2.peso_ton}},
  "Data_Hora_Chegada" : "{{formatDate(now; "YYYY-MM-DD HH:mm:ss"; "America/Sao_Paulo")}}",
  "Data_Saida_Prevista" : "{{2.data_saida_prevista}}",
- "Zona" : "Zona determinada pela IA entre Hot, Warm, Cold ou Frozen",
-  "IMO" : {{if(2.IMO; "TRUE"; "FALSE")}},
+ "Zona" : "{{upper("Zona determinada pela IA entre HOT, WARM, COLD ou FROZEN")}}",
+  "IMO" : {{if(upper(2.IMO); "TRUE"; "FALSE")}},
 "Justificativa" : "Explicação técnica detalhada da posição e da zona escolhida baseada nas regras de negócio"
 }
 
