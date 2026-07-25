@@ -221,7 +221,6 @@ export function YardMap({
                   }
                 }}
               >
-                {/* Marca d'água de fundo */}
                 {isOccupied && (
                   <Package
                     className="pointer-events-none absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 text-white/10"
@@ -232,7 +231,6 @@ export function YardMap({
 
                 {isOccupied ? (
                   <div className="relative z-10 flex h-full w-full flex-col justify-between p-2 text-left">
-                    {/* Topo do Card */}
                     <div className="mb-1 border-b border-white/10 pb-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-[10px] text-muted-foreground/80">
@@ -255,7 +253,6 @@ export function YardMap({
                       </div>
                     </div>
 
-                    {/* Rodapé do Card */}
                     <div className="mt-auto flex w-full items-end justify-between gap-2">
                       <div className="flex min-w-0 flex-col gap-1">
                         <div className="flex flex-col text-[9px] leading-tight">
@@ -276,7 +273,6 @@ export function YardMap({
                         </div>
                       </div>
 
-                      {/* Ícone de Carga Perigosa (IMO) */}
                       {isHazardous && (
                         <div className="mb-0.5 flex shrink-0 items-center">
                           <AlertTriangle
