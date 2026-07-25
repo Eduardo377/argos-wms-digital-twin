@@ -54,15 +54,24 @@ export function TerminalDashboard() {
   function handleChange(patch: Partial<MovementData>) {
     setData((prev) => ({ ...prev, ...patch }));
   }
+  // ... (estado anterior)
 
+  // 1. [TUTORIAL] MATEMÁTICA/LÓGICA DO "GUINDASTE" (Mouse Tracking)
+  // Este hook é responsável por fazer o componente `<GhostContainer />` seguir o ponteiro.
+  // Por questão de performance, só adicionamos o 'event listener' ao objeto window
+  // SE o usuário efetivamente "fisgar" o contêiner (isGrabbed === true).
+  // Isso evita que o navegador fique processando a posição X/Y do mouse o tempo todo à toa.
   useEffect(() => {
     if (!isGrabbed) return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Atualizamos o estado com as coordenadas exatas da tela (clientX e clientY)
+      // O GhostContainer usará transform: translate(-50%, -50%) para centralizar no cursor.
       setMousePos({ x: e.clientX, y: e.clientY });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+    // Cleanup function: remove o listener quando o contêiner for solto ou componente desmontado
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isGrabbed]);
 
@@ -130,7 +139,9 @@ export function TerminalDashboard() {
     justificativa?: string;
     Status?: string;
   };
+  // ... (carregamento CSV anterior)
 
+  // 2. [TUTORIAL] FETCH E TRATAMENTO TEXTUAL DA IA
   async function handleConsult() {
     if (timerRef.current) clearTimeout(timerRef.current);
     setLoading(true);
@@ -156,24 +167,32 @@ export function TerminalDashboard() {
         body: JSON.stringify(payload),
       });
 
+      // Passo 1: Pegamos a resposta como TEXTO BRUTO (.text()) ao invés de .json().
+      // Por quê? IAs generativas são imprevisíveis. Às vezes respondem com o JSON limpo,
+      // mas às vezes injetam formatação Markdown (ex: ```json { ... } ```).
       const textResponse = await response.text();
       let responseData: WebhookResponse = {};
 
       try {
         if (textResponse) {
+          // Passo 2: Expressão Regular (Regex) que "limpa" a resposta.
+          // Ela procura e remove crases de formatação Markdown antes de tentar o parse.
           const cleanedText = textResponse
             .replace(/```(?:json)?\n?|```/g, "")
             .trim();
           responseData = JSON.parse(cleanedText) as WebhookResponse;
         }
       } catch (parseError) {
+        // Fallback: se mesmo após a limpeza o JSON for inválido, cai neste bloco.
         console.warn("Resposta não-JSON recebida da API:", textResponse);
         if (!response.ok) {
           throw new Error(textResponse || `Erro HTTP: ${response.status}`);
         }
       }
 
+      // Passo 3: Tratamento de erros HTTP específicos
       if (!response.ok) {
+        // O código 429 (Too many requests) é comum em webhooks gratuitos (ex: n8n, Make).
         if (textResponse.includes("Too many")) {
           setAllocationError(
             "Limite de tráfego atingido. Aguarde alguns segundos e tente novamente.",
@@ -221,11 +240,14 @@ export function TerminalDashboard() {
     }
   }
 
+  // 3. [TUTORIAL] ATUALIZAÇÃO OTIMISTA (Optimistic UI)
   async function handleDropSlot(slotId: string) {
     if (!containerReady || occupiedId) return;
-
     if (slotId !== targetId) return;
 
+    // CONCEITO: Ao invés de exibir um spinner de "Carregando..." e esperar o banco de dados
+    // confirmar a gravação, nós alteramos os estados visuais (setOccupiedId, setResult) IMEDIATAMENTE.
+    // O usuário percebe a ação como instantânea. Essa técnica se chama "Optimistic UI".
     setOccupiedId(slotId);
     setContainerReady(false);
     setIsGrabbed(false);
@@ -236,6 +258,7 @@ export function TerminalDashboard() {
 
     const realZone = slotId.split("-")[0];
 
+    // Após atualizar a UI, disparamos a requisição em background de forma silenciosa.
     try {
       const payloadGravacao = {
         vaga_confirmada: slotId,
@@ -265,6 +288,8 @@ export function TerminalDashboard() {
 
       console.log("Sucesso: Movimentação registrada na Torre de Controle.");
     } catch (error) {
+      // Em uma aplicação 100% robusta de produção, este 'catch' deveria desfazer
+      // a "Atualização Otimista" caso o servidor negue a ação, emitindo um alerta ao usuário.
       console.error("Falha ao gravar movimentação no banco:", error);
     }
   }

@@ -216,6 +216,11 @@ export function YardMap({
                 }}
                 onClick={(e) => {
                   e.preventDefault();
+                  // [TUTORIAL] LÓGICA DE DROP DO GUINDASTE:
+                  // Só permitimos acionar a função de "soltar" (onDropSlot) se todas as 3 regras de negócio forem cumpridas:
+                  // 1. A vaga não está previamente ocupada (!isOccupied)
+                  // 2. O mouse realmente "segura" um contêiner no momento (isGrabbed)
+                  // 3. A vaga não foi escurecida pelos filtros ativos do painel (!isFilteredOut)
                   if (!isOccupied && isGrabbed && !isFilteredOut) {
                     onDropSlot(slot.id);
                   }
