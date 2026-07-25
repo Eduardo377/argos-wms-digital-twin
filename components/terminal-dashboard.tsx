@@ -94,11 +94,12 @@ export function TerminalDashboard() {
             const saidaPrevista = cols[5 + offset];
             const zona = cols[6 + offset];
             const imoCol = cols[7 + offset] || "";
-
             const isImoTrue =
               imoCol.toUpperCase() === "SIM" ||
               imoCol.toUpperCase() === "TRUE" ||
               imoCol === "1";
+            const justificativaCol = cols[9 + offset] || "";
+            const observacaoCol = cols[10 + offset] || "";
 
             return {
               id: posId,
@@ -110,6 +111,8 @@ export function TerminalDashboard() {
               dataSaida: saidaPrevista,
               zone: zona,
               isIMO: isImoTrue,
+              justificativa: justificativaCol,
+              observacao: observacaoCol,
             };
           })
           .filter((s): s is NonNullable<typeof s> => s !== null && !!s.id);

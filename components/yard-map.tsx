@@ -221,6 +221,7 @@ export function YardMap({
                   }
                 }}
               >
+                {/* Marca d'água de fundo */}
                 {isOccupied && (
                   <Package
                     className="pointer-events-none absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 text-white/10"
@@ -229,16 +230,9 @@ export function YardMap({
                   />
                 )}
 
-                {isOccupied && isHazardous && (
-                  <AlertTriangle
-                    className="pointer-events-none absolute bottom-1 right-2 size-8 text-yellow-500/25"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  />
-                )}
-
                 {isOccupied ? (
                   <div className="relative z-10 flex h-full w-full flex-col justify-between p-2 text-left">
+                    {/* Topo do Card */}
                     <div className="mb-1 border-b border-white/10 pb-1">
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-[10px] text-muted-foreground/80">
@@ -248,23 +242,22 @@ export function YardMap({
                           {slot.peso || "0"}t
                         </span>
                       </div>
-                      <div className="mt-0.5 w-full truncate font-mono text-[13px] font-bold text-white">
-                        <div className="mt-0.5 flex w-full items-center justify-between gap-1">
-                          <div className="truncate font-mono text-[13px] font-bold text-white">
-                            {isNewlyOccupied ? containerId : slot.containerId}
-                          </div>
-                          {(slot.justificativa || slot.observacao) && (
-                            <Info
-                              className="size-4 shrink-0 text-primary/80 drop-shadow-md"
-                              aria-hidden="true"
-                            />
-                          )}
+                      <div className="mt-0.5 flex w-full items-center justify-between gap-1">
+                        <div className="truncate font-mono text-[13px] font-bold text-white">
+                          {isNewlyOccupied ? containerId : slot.containerId}
                         </div>
+                        {(slot.justificativa || slot.observacao) && (
+                          <Info
+                            className="size-4 shrink-0 text-primary/80 drop-shadow-md"
+                            aria-hidden="true"
+                          />
+                        )}
                       </div>
                     </div>
 
-                    <div className="mt-auto flex items-end justify-between">
-                      <div className="flex flex-col gap-1">
+                    {/* Rodapé do Card */}
+                    <div className="mt-auto flex w-full items-end justify-between gap-2">
+                      <div className="flex min-w-0 flex-col gap-1">
                         <div className="flex flex-col text-[9px] leading-tight">
                           <span className="text-muted-foreground/70">
                             Chegada:
@@ -282,6 +275,17 @@ export function YardMap({
                           </span>
                         </div>
                       </div>
+
+                      {/* Ícone de Carga Perigosa (IMO) */}
+                      {isHazardous && (
+                        <div className="mb-0.5 flex shrink-0 items-center">
+                          <AlertTriangle
+                            className="pointer-events-none absolute right-1 bottom-1 size-8 text-yellow-500/25"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
